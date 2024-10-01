@@ -1,0 +1,269 @@
+
+.home-main{
+    background-image: url("../../public/main.svg");
+}
+
+.home-main , .roles-section { 
+    height: 50rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  
+}
+
+.home-main {
+    background-color: var(--sec-dark);
+}
+
+
+
+.home-main .wrapper{ 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    gap: 10rem;
+    position: relative;
+}
+
+.home-main .wrapper .wrapper-bg{
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100% ;
+    height: 100% ;
+    z-index: 1;
+}
+
+
+.bg-svg{
+    position: absolute;
+    right: 0;
+    bottom: 0;
+  }
+
+  .left-box , .right-box{
+    width: 50%;
+  }
+
+.left-box  { 
+    color: var(--white);
+    text-wrap: wrap;
+}
+
+.left-box  h2{ 
+    margin-bottom: 2rem;
+    opacity:0;
+}
+
+.left-box  p{ 
+    margin-bottom: 0.5rem;
+    margin-left: 0.5rem;
+    font-weight: 600;
+    opacity:0;
+}
+
+
+.right-box img{
+    max-width: 37.5rem;
+}
+
+
+
+/***********************************************************/
+.roles-section  .wrapper{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid transparent;
+    width: fit-content;
+    
+
+}
+
+
+
+.role-box{
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    align-items: center;
+    padding: 3rem 4rem;
+    min-height: 28rem;
+    max-width: 35rem;
+    width: 100%;
+    height: fit-content;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    background-color: none;
+}
+
+
+
+/* before is the background of card role-box*/
+.role-box::before{
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    
+}
+/* before is the circle*/
+.role-box::after{
+    content: "";
+    position: absolute;
+    left: calc(var(--x) - 10rem);/*to move from center of circle*/ 
+    top: calc(var(--y) - 10rem);/*to move from center of circle*/ 
+    width: 20rem;
+    height: 20rem;
+    border-radius: 50%;
+    box-shadow: 1rem 1rem 5rem #e91e6261;
+    background-color: var(--main-hovers);
+    z-index: 2; 
+    transition: 2s ease;
+}
+
+.role-box > *{
+    z-index: 5;/*content inside always on top of all box layers*/
+}
+
+.role-box:nth-of-type(1), .role-box:nth-of-type(3){
+    scale: 0.9;
+    z-index: 3; /*left and right boxes are behind them middle*/
+}
+
+.role-box:nth-of-type(2){
+    scale:1.15;
+    z-index: 4;
+}
+
+
+.role-box:nth-of-type(1)::before {
+    background-color: var(--sec-dark);
+    border-top-left-radius: 1rem;
+    border-bottom-left-radius: 1rem;
+}
+
+.role-box:nth-of-type(2)::before {
+    background-color: var(--sec);
+    border-radius: 1rem;
+}
+
+.role-box:nth-of-type(3)::before {
+    background-color: var(--sec-dark);
+    border-top-right-radius: 1rem;
+    border-bottom-right-radius: 1rem;
+}
+
+
+
+
+ .role-image{
+    width: 7rem;
+    height: 7rem;
+}
+
+
+.role-text{
+    z-index: 10;
+    margin-bottom: 1rem;
+}
+
+
+
+.role-text-h2{
+    text-wrap: nowrap;
+    color: var(--white);
+    font-size: 1.5rem;
+}
+
+
+.role-perms{
+    color: var(--white);
+    font-weight: 600;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.role-perms ion-icon{
+    font-size: 1.2rem;
+}
+
+.role-perms ion-icon[name="checkmark-outline"] {
+    color: var(--green);
+  }
+  
+  .role-perms ion-icon[name="close-outline"] {
+    color: var(--red);
+  }
+
+  @media (max-width: 800px) {
+
+    .home-main{
+        height: min-content;
+        padding: 10rem 0;
+    }
+
+    .home-main .wrapper{ 
+            flex-direction: column;
+            padding:0  2rem;
+        }
+
+        .left-box , .right-box{
+            width: 100%;
+            height: 50%;
+          }
+
+        .roles-section{
+            display: flex;
+            align-items: center;
+            height: fit-content;
+            margin-top: 4rem;
+            margin-bottom: 4rem;
+        }
+    .roles-section  .wrapper{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        border: 1px solid transparent;
+        width: fit-content;
+        gap: 1rem;
+        height: fit-content;
+
+        }
+
+        .role-box{
+            border-radius: 1rem;
+            
+        }
+
+        .role-box:nth-of-type(1){
+
+            order:1;
+            
+        }
+        
+        .role-box:nth-of-type(2){
+
+            order:2;
+
+        }
+        
+        .role-box:nth-of-type(3){
+
+            order:3;
+        }
+        
+        .role-box:nth-of-type(1):hover , .role-box:nth-of-type(2):hover ,.role-box:nth-of-type(3):hover {
+            scale: 1.1;
+        }
+
+
+  }

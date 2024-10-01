@@ -1,0 +1,21 @@
+.update-emp-page{
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+    background-color: var(--sec-dark);
+  }
+  .center{
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 50rem;
+      background: white;
+      border-radius: 10px;
+      box-shadow: var(--shadow-hard-values);
+      -webkit-transform: translate(-50%, -50%);
+      -moz-transform: translate(-50%, -50%);
+      -ms-transform: translate(-50%, -50%);
+      -o-transform: translate(-50%, -50%);
+      padding: 1rem 2rem;
+  }

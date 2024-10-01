@@ -1,0 +1,76 @@
+.mailer_page{
+    width: 100vw;
+    min-height: calc(100vh - 4rem);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--sec-dark);
+}
+
+.container {
+    max-width: 37.5rem;
+    width: 100%;
+    padding: 1.5rem;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 0.8rem rgba(0, 0, 0, 0.1);
+}
+
+/* Heading styling */
+.container h1 {
+    margin-bottom: 1.5rem;
+    font-size: 1.8rem;
+    color: var(--sec);
+    text-align: center;
+}
+
+/* Form styling */
+.form {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Form group styling */
+.formGroup {
+    margin-bottom: 1rem;
+}
+
+/* Label styling */
+.formGroup label {
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+    display: block;
+}
+
+/* Input and textarea styling */
+.formGroup input, .formGroup textarea {
+    width: 100%;
+    padding: 0.8rem;
+    border: 2px solid var(--sec);
+    border-radius: 4px;
+    font-size: 1rem;
+    outline: none ;
+}
+
+.formGroup input:focus, .formGroup textarea:focus {
+    border: 2px solid var(--main-hovers);
+    
+
+}
+
+/* Button styling */
+.container form button {
+    padding: 0.8rem;
+    border: none;
+    border-radius: 4px;
+    background-color: var(--sec);
+    color: #fff;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.container form button:hover {
+    background-color:  var(--main-hovers);
+}
+

@@ -1,0 +1,68 @@
+
+.dashboardContainer {
+    margin: 0 auto;
+    padding: 1.5rem;
+}
+
+.dashboardTitle {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    font-size: 2.5rem;
+    color: var(--sec);
+}
+
+.analyticsGrid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(30rem, 1fr));
+    grid-template-rows:  repeat(auto-fill ,minmax(10rem, 1fr));
+    gap: 1.5rem;
+}
+
+.analyticsBox {
+    background-color: var(--sec-dark);
+    border-radius: 0.8rem;
+    padding: 1.5rem;
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.chartContainer{
+    grid-column: span 3;
+    grid-row: span 2;
+    height: 20rem;
+}
+
+.analyticsBox:hover {
+    transform: translateY(-5px);
+
+}
+
+.analyticsBox h2 {
+    font-size: 1.5rem;
+    color: var(--white);
+    margin-bottom: 0.8rem;
+}
+
+.analyticsValue {
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--main-hovers);
+    margin: 0;
+}
+
+
+@media (max-width:1200px) {
+    
+    .analyticsGrid {
+        grid-template-columns: repeat(1, minmax(30rem, 1fr));
+        grid-template-rows: repeat(auto-fill,minmax(10rem, 1fr));
+        gap: 1.5rem;
+    }
+
+
+    .chartContainer{
+        grid-column: span 1;
+        grid-row: span 1;
+    }
+  }

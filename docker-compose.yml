@@ -1,0 +1,85 @@
+version: '3.8'
+
+# mongodb won't be added as an image as it's hosted on mongo cloud atlas
+
+services:
+
+  nginx:
+    depends_on:
+      - server
+      - client
+    restart: on-failure
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./nginx
+    ports:
+      - "3050:80"
+      
+
+    networks:
+      - app-net
+
+  mysql_db:
+    build: 
+      context: .
+      dockerfile: Dockerfile.mysql
+    container_name: mysql_db_server
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+    volumes:
+      - mysql_db_vol:/var/lib/mysql
+    networks:
+      - app-net
+  
+
+
+  server:
+    build: 
+      context: ./Server/
+      dockerfile: Dockerfile.backend
+    container_name: ems_server
+    environment:
+      - DB_PASSWORD=${DB_PASSWORD}
+      - SECRET_KEY=${SECRET_KEY}
+      - EMS_MongoDB=${EMS_MongoDB}
+      - RESETPASSPATH=${RESETPASSPATH}
+      - MAILERPASS=${MAILERPASS}
+      - DB_NAME=${DB_NAME}
+      - PORT=${PORT}
+      - DB_USER=${DB_USER}
+      - DB_PORT=${DB_PORT} 
+      - DB_HOST=${DB_HOST} 
+    ports:
+      - 5500:5500
+    networks:
+      - app-net
+    depends_on:
+      - mysql_db
+
+  client:
+    build: 
+      context: ./ems/
+      dockerfile: Dockerfile.frontend
+    container_name: ems_client
+    
+    environment:
+      - APIURL=http://localhost:3050/api # so requests are handled by nginx /api configurations
+
+    ports:
+      - 3000:3000
+
+    networks:
+      - app-net 
+
+
+networks:
+  app-net :
+    driver : bridge
+
+volumes:
+  mysql_db_vol:
+
+
+
