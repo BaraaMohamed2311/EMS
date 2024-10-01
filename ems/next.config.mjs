@@ -2,7 +2,7 @@
 
 const nextConfig = {
     env: {
-        APIKEY: process.env.APIURL,
+        APIKEY: 'http://localhost:5500/api',
       },
       
       reactStrictMode: false,
