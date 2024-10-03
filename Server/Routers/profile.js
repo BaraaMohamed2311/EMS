@@ -47,13 +47,13 @@ const storage = new GridFsStorage({
 
 /**           Get User Image           **/
 // if user doesn't exist create it
-  router.get("/prof-img",async (req,res)=>{
+  router.get("/prof-img",jwtVerify ,async (req,res)=>{
     try{ 
         if(gfs_bucket){
         // search for user
-        console.log("req.query['emp_email']",req.query["emp_email"])
+
         const employee = await Employees_Img_module.findOne({emp_email:req.query["emp_email"]});
-        console.log("employee",employee)
+
         // let cursor find and point to it's img in bucket
         if(!employee || !employee.emp_pic.file_name){
           res.header("Content-Type", "application/json");
@@ -148,34 +148,6 @@ router.put("/update-prof-img" , jwtVerify, createUser, async (req , res , next)=
     }
 })
 
-
-router.post("/retire-request",jwtVerify,async (req , res )=>{
-  try{
-      const { user_emp_email , other_emp_email ,textBody} = req.body;
-
-      if(!user_emp_email || !other_emp_email) return res.status(400).json({success:false , message:"Bad Request"});
-
-      const other_Role = await User.getUserRole(null , "Error Getting User Role /retire-request",other_emp_email);
-
-      if(other_Role !== "SuperAdmin"  && other_Role !=="Admin" )
-        return res.status(404).json({success:false , message:"Other User Must Be SuperAdmin Or Admin"});
-
-      const isSent = await mailer(user_emp_email , other_emp_email,"Retirement Request",textBody);
-
-      if(isSent){
-        return res.status(200).json({success:true , message:"Successfully Sent Retirement Request"})
-      }
-      else{
-        return res.status(500).json({success:true , message:"Failed To Send Retirement Request"})
-      }
-
-
-  }
-  catch(err){
-    consoleLog(`Error Requesting Retirement ${err}`,"error");
-    res.status(500).json({success:false , message:"Error Requesting Retirement"})
-  }
-})
 
 
 module.exports = router;

@@ -8,20 +8,19 @@
 
 - User has to have "Display Salary" or "Modify Salary" Permissions to view other users' salaries
 
-- List of users only accessed by users with higher roles than "<span style="color:#29d199">Employee</span>"
+- List of users only accessed by users with higher roles than **🟢 Employee**
 
-- New users can register emails but cannot log in untill they get accepted from waiting list 
+- New users can register emails but cannot log in until they get accepted from waiting list 
 
 - Users Can upload profile images
 
-- Important Actions like ( Deleting User , Accept Registration , Decline Registration ) sends emails by default to user
+- Important Actions like (Deleting User, Accept Registration, Decline Registration) sends emails by default to user
 
 - Any Other changes you can use Mailer Page to send emails
 
-
 ## Performance 
 
-- Users' list are requested as chuncks
+- Users' list are requested as chunks
 
 - Users from list are cached at localStorage
 
@@ -29,9 +28,11 @@
 
 - Logged in user data are cached at localStorage
 
-- In roles table instead of adding all users with <span style="color:#29d199">Employee</span> role, If users do not exist or exists but no role is given then by default their role is <span style="color:#29d199">Employee</span>
+- In roles table instead of adding all users with **🟢 Employee** role, If users do not exist or exists but no role is given then by default their role is **🟢 Employee**
 
 - Used connection pool so number of connections created is limited and users are queued
+
+- Used <Image> provided by next for better SEO & performance
 
 ## Security 
 
@@ -41,7 +42,7 @@
 
 - Client side & Server side checking 
     - For images type & size
-    - For data modification ( @ client we delete un authorized input fields & at server we check roles & perms)
+    - For data modification (at client we delete unauthorized input fields & at server we check roles & perms)
 
 ## Extra
 
@@ -51,6 +52,6 @@
 
 ## Testing
 
-- User1: baraamohamed2311@gmail.com / <span style="color:#f4ce14">SuperAdmin</span> / id : 3001   passwords : 1234
-- User2: daniel.daniels6551@gmail.com / <span style="color:#594eca">Admin</span> /   id : 2999  passwords : 1234 
-- User3: julia.palmer7728@gmail.com / <span style="color:#29d199">Employee</span> /  id : 2998  passwords : 1234
+- User1: baraamohamed2311@gmail.com / **⭐ SuperAdmin** / id : 3001 passwords : 1234
+- User2: daniel.daniels6551@gmail.com / **🟣 Admin** / id : 2999 passwords : 1234 
+- User3: julia.palmer7728@gmail.com / **🟢 Employee** / id : 2998 passwords : 1234
