@@ -7,7 +7,7 @@ import { useUserDataContext } from "@/contexts/user_data";
 import userNotification from "@/utils/userNotification";
 import { useRouter } from "next/navigation";
 import { useCachedEmployeesContext } from "@/contexts/cached_employees";
-export default function UpdateEmpForm({url ,isEditing , setIsEditing , employee_displayed ,currPage }){
+export default function UpdateEmpForm({isEditing , setIsEditing , employee_displayed ,currPage }){
     
     let [formBtnState, setFormBtnState] = useState("Update");
     let [isLoadingBtn , setIsLoadingBtn ] = useState(false);

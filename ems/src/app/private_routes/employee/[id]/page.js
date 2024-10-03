@@ -91,7 +91,6 @@ function UpdateState(reader_result){
       {user_data.emp_perms && user_data.emp_perms.has("Modify Data") && isEditing ? (
         <UpdateEmpForm
           currPage = {currPage}
-          url={`user/update-user`}
           employee_displayed={employee_displayed}
           isEditing={isEditing}
           setIsEditing={setIsEditing}

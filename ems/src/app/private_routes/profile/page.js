@@ -34,7 +34,7 @@ function profilePage() {
       // create fileReader to read image once recieved from res
       reader.addEventListener('load',()=> CacheImageLocalStorage(reader.result));
       // fetch image
-      getUserImage('/profile/prof-img', user_data.emp_email , reader ,setBlobURL  )
+      getUserImage('/profile/prof-img', user_data.emp_email , reader ,setBlobURL , user_data.token  )
     }
 
     return ()=>{

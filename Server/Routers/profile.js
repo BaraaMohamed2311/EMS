@@ -8,8 +8,7 @@ const connect_bucket  = require("../Utils/connect_mongo_bucket");
 const deleteFromBucket = require("../middlewares/deleteFromBucket");
 const createUser = require("../middlewares/createUser");
 const jwtVerify = require("../middlewares/jwtVerify");
-const User = require("../Classes/User");
-const mailer = require("../Utils/mailer");
+
 let gfs_bucket;
 // allowed types 
 const mimetypes = new Set(["image/jpeg" ,"image/JPEG" , "image/png" , "image/jpg" , "image/JPG" , "image/PNG"]);
@@ -47,7 +46,7 @@ const storage = new GridFsStorage({
 
 /**           Get User Image           **/
 // if user doesn't exist create it
-  router.get("/prof-img",async (req,res)=>{
+  router.get("/prof-img" ,jwtVerify,async (req,res)=>{
     try{ 
         if(gfs_bucket){
         // search for user
@@ -149,33 +148,6 @@ router.put("/update-prof-img" , jwtVerify, createUser, async (req , res , next)=
 })
 
 
-router.post("/retire-request",jwtVerify,async (req , res )=>{
-  try{
-      const { user_emp_email , other_emp_email ,textBody} = req.body;
-
-      if(!user_emp_email || !other_emp_email) return res.status(400).json({success:false , message:"Bad Request"});
-
-      const other_Role = await User.getUserRole(null , "Error Getting User Role /retire-request",other_emp_email);
-
-      if(other_Role !== "SuperAdmin"  && other_Role !=="Admin" )
-        return res.status(404).json({success:false , message:"Other User Must Be SuperAdmin Or Admin"});
-
-      const isSent = await mailer(user_emp_email , other_emp_email,"Retirement Request",textBody);
-
-      if(isSent){
-        return res.status(200).json({success:true , message:"Successfully Sent Retirement Request"})
-      }
-      else{
-        return res.status(500).json({success:true , message:"Failed To Send Retirement Request"})
-      }
-
-
-  }
-  catch(err){
-    consoleLog(`Error Requesting Retirement ${err}`,"error");
-    res.status(500).json({success:false , message:"Error Requesting Retirement"})
-  }
-})
 
 
 module.exports = router;
