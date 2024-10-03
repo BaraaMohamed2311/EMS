@@ -10,7 +10,7 @@ function SearchOptions({  clearBtn, activateFilterBtn, currPage , EMAILREF , sel
         activateFilterBtn(null ,"currPage" , false);
     },[currPage])
     
-    console.log("selectsElementsData" , selectsElementsData)
+
     return(
         <div className={styles["table-search-options"]}>
             <input ref={EMAILREF} type="email" placeholder="Search Using Email" />

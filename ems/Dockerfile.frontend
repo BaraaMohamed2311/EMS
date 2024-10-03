@@ -3,7 +3,7 @@ FROM node:20-alpine
 WORKDIR /EMS/Client/
 
 COPY package.json .
-
+COPY package-lock.json .
 
 RUN npm i
 

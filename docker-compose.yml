@@ -21,15 +21,14 @@ services:
 
   mysql_db:
     build: 
-      context: .
+      context: ./db/
       dockerfile: Dockerfile.mysql
+    restart: on-failure
     container_name: mysql_db_server
     environment:
       MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
       MYSQL_DATABASE: ${DB_NAME}
-      MYSQL_USER: ${DB_USER}
-    volumes:
-      - mysql_db_vol:/var/lib/mysql
+
     networks:
       - app-net
   
@@ -57,6 +56,9 @@ services:
       - app-net
     depends_on:
       - mysql_db
+    volumes:
+      - ${CURRENT_PWD}/Server:/EMS/Server
+      - /EMS/Server/node_modules
 
   client:
     build: 
@@ -72,6 +74,9 @@ services:
 
     networks:
       - app-net 
+    volumes:
+      - ${CURRENT_PWD}/ems:/EMS/Client
+      - /EMS/ems/node_modules
 
 
 networks:

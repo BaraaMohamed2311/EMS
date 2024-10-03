@@ -12,7 +12,7 @@ const connectionPool = mysql.createPool({
   connectionLimit: 10,
 });
 
-console.log("connectionPool",connectionPool)
+
 
 //events for debugging and error handling
 connectionPool.on('connection', (connection) => {

@@ -1,6 +1,5 @@
 const router = require("express").Router();
 const bcrypt = require("bcrypt");
-const connectionPool = require("../Utils/connect_ems_db.js")
 const jwtVerify = require("../middlewares/jwtVerify.js")
 const createJWTToken = require("../Utils/createJWTToken.js");
 const isExist = require("../Utils/isExist.js");
