@@ -2,12 +2,12 @@ import styles from "./searchoptions.module.css"
 import Select from "../Select/Select";
 import {  useEffect } from "react";
 
-function SearchOptions({  clearBtn, activateFilterBtn, currPage , EMAILREF , selectsElementsData }){
+function SearchOptions({  clearBtn, handleFilterOption, currPage , EMAILREF , selectsElementsData }){
 
     
     useEffect(()=>{
         // filter again for next pages
-        activateFilterBtn(null ,"currPage" , false);
+        handleFilterOption(null ,"currPage" , false);
     },[currPage])
     
 
@@ -17,7 +17,7 @@ function SearchOptions({  clearBtn, activateFilterBtn, currPage , EMAILREF , sel
             {selectsElementsData && selectsElementsData.map((selectData )=>{
                 return (<Select styles={styles}  key={selectData.key} isLabeld = {false} select_options={selectData} />)
             })}
-            <button onClick={(e)=>activateFilterBtn(e , "button" , false)} className={`${styles["filter"]} `}>Filter</button>
+            <button onClick={(e)=>handleFilterOption(e , "button" , false)} className={`${styles["filter"]} `}>Filter</button>
             <button onClick={clearBtn} className={`${styles["filter"]} `}>Reset</button>
         </div>
     )
