@@ -38,6 +38,7 @@ export default function LoginPage() {
         // start loading button
         setIsLoadingBtn(true)
         // Now we log in
+        console.log("process.env.APIKEY",process.env.APIKEY)
         fetch(`${process.env.APIKEY}/user/login`, 
               {
               method:"POST",

@@ -18,8 +18,9 @@ export default function MailerForm({handleSubmitEmail , refrences , styles , isL
                 </div>}
                 {refrences.Subject_REF  && <div className={styles.formGroup}>
                     <label htmlFor="subject">Subject:</label>
-                    {/* if subject is Retirement Request or Edit Request we use it as defaut value for subject */}
-                    <input ref={refrences.Subject_REF} value={Queries.subject ? Queries.subject :"" } type="text" id="subject" name="subject" required />
+                    {/* if subject is Retirement Request or Edit Request we use it as defaut value  if not then let user type it's subject otherwise value attr will prevent him*/}
+                    {Queries.subject && <input ref={refrences.Subject_REF} value={Queries.subject } type="text" id="subject" name="subject" required />}
+                    {!Queries.subject && <input ref={refrences.Subject_REF}  type="text" id="subject" name="subject" required />}
                 </div>}
             
                 {refrences.TEXT_REF &&  <div className={styles.formGroup}>

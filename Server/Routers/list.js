@@ -71,7 +71,7 @@ router.get("/employees",jwtVerify,async (req,res)=>{
         LIMIT ${size} OFFSET ${(pagination - 1) * size}`;
 
       const users = await executeMySqlQuery(query , "Error executing /employees list GET");
-
+        console.log(query ,users)
       if( users && users.length > 0){
         res.status(200).json({success : true , body:users, message:"Successfully Fetched Data"})
       }

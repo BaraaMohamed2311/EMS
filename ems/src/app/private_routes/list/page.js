@@ -38,7 +38,7 @@ function ListPage() {
         
     setIsFiltered(false) // set to false to render cached employees with no filters
     setFilteredResults([]); //to remove all
-
+    setCurrPage(1)
 
     // reset select filters back to no filter
     EMAILREF.current.value = ""
@@ -55,7 +55,8 @@ function handleFilterOption(e , cause){
     const emp_position = ByPositionREF.current.value === "Position Filter" ? null : ByPositionREF.current.value;
     const emp_perms = ByPermsREF.current.value === "Perms Filter" ? null : ByPermsREF.current.value;
 
-    if(!emp_email && !role_name && !emp_position && !emp_perms){
+    // if cause is button means button pressed & all filters empty then notify
+    if(!emp_email && !role_name && !emp_position && !emp_perms && cause === "button"){
         userNotification("error","No Filters Entered");
         handleClearFilterOption(); // resets if no filtering specified
         return; // to escape rest of the function
