@@ -1,4 +1,4 @@
-FROM node:20-alpine
+FROM node:20-alpine 
 
 WORKDIR /EMS/Server/
 
@@ -16,3 +16,5 @@ EXPOSE 5500
 
 
 CMD [ "npm" , "run" , "start" ]
+
+

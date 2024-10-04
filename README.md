@@ -55,3 +55,30 @@
 - User1: baraamohamed2311@gmail.com / **⭐ SuperAdmin** / id : 3001 passwords : 1234
 - User2: daniel.daniels6551@gmail.com / **🟣 Admin** / id : 2999 passwords : 1234 
 - User3: julia.palmer7728@gmail.com / **🟢 Employee** / id : 2998 passwords : 1234
+
+## Testing
+
+## Api Docs
+
+https://documenter.getpostman.com/view/30506181/2sAXxMespT
+
+
+
+## Usage 
+
+1. next.config.mjs make sure to comment "localhost:5500/api" if you were to containerize
+
+2. if you were to containerize but use db on your host then use .env.dev file 
+
+3. 
+    - If .env.local => Do not run compose and make changes that you want in app, client is :3000 &      server is :5500 & and db must be at your host
+    
+    *   Ems/ems/ => npm run dev  , Ems/Server/ => npm run start
+
+    - If .env.dev => client runs on :3000 & server :5500 & db should be at your host
+
+    * docker-compose --env-file ./Server/.env.dev up -d --build
+
+    - If .env.prod => client runs on :3050 & server :3050/api & db is at mysql contianer
+
+    * docker-compose --env-file ./Server/.env.prod up -d --build

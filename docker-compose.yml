@@ -1,6 +1,8 @@
 version: '3.8'
 
-# mongodb won't be added as an image as it's hosted on mongo cloud atlas
+# Due to using mongo atlas cloud no need to add service for it
+
+# docker-compose --env-file <path-to env file> up -d --build
 
 services:
 
@@ -33,11 +35,13 @@ services:
       - app-net
   
 
-
+# server does envirmonet checking at server.js code
   server:
     build: 
       context: ./Server/
       dockerfile: Dockerfile.backend
+      args:
+        - NODE_ENV=${NODE_ENV:-development}
     container_name: ems_server
     environment:
       - DB_PASSWORD=${DB_PASSWORD}
@@ -50,6 +54,7 @@ services:
       - DB_USER=${DB_USER}
       - DB_PORT=${DB_PORT} 
       - DB_HOST=${DB_HOST} 
+      - NODE_ENV=${NODE_ENV:-development}
     ports:
       - 5500:5500
     networks:
@@ -60,15 +65,20 @@ services:
       - ${CURRENT_PWD}/Server:/EMS/Server
       - /EMS/Server/node_modules
 
+
+# client has to be provided with enviroment or by default it will build development env
   client:
     build: 
       context: ./ems/
       dockerfile: Dockerfile.frontend
+      target: ${NODE_ENV:-development}
+      args:
+        - NODE_ENV=${NODE_ENV}
     container_name: ems_client
     
     environment:
-      - APIURL=http://localhost:3050/api # so requests are handled by nginx /api configurations
-
+      - APIURL=${APIURL} # so requests are handled by nginx /api configurations
+      - NODE_ENV=${NODE_ENV:-development}
     ports:
       - 3000:3000
 

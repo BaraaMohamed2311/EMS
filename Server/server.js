@@ -1,5 +1,14 @@
 // configuring dotenv to access variables
-require('dotenv').config()
+const dev = process.env.NODE_ENV ;
+
+if (dev === 'development') {
+  require('dotenv').config({ path: './.env.development' });  // Load development environment variables
+} else if(dev === 'production') {
+  require('dotenv').config({ path: './.env.production' });   // Load production environment variables
+}
+else{
+  require('dotenv').config({ path: './.env.local' }); 
+}
 /**************************/
 const express = require("express");
 const app = express();
