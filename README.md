@@ -56,7 +56,6 @@
 - User2: daniel.daniels6551@gmail.com / **🟣 Admin** / id : 2999 passwords : 1234 
 - User3: julia.palmer7728@gmail.com / **🟢 Employee** / id : 2998 passwords : 1234
 
-## Testing
 
 ## Api Docs
 
@@ -66,19 +65,27 @@ https://documenter.getpostman.com/view/30506181/2sAXxMespT
 
 ## Usage 
 
-1. next.config.mjs make sure to comment "localhost:5500/api" if you were to containerize
 
-2. if you were to containerize but use db on your host then use .env.dev file 
+1. In **next.config.mjs**, make sure to comment out `"localhost:5500/api"` if you're containerizing the application.
 
-3. 
-    - If .env.local => Do not run compose and make changes that you want in app, client is :3000 &      server is :5500 & and db must be at your host
-    
-    *   Ems/ems/ => npm run dev  , Ems/Server/ => npm run start
+2. If you're containerizing but want to use the database on your host machine, use the **.env.dev** file.
 
-    - If .env.dev => client runs on :3000 & server :5500 & db should be at your host
+3. Environment-specific instructions:
+   
+   - **For .env.local**:
+     - Do **not** run Docker Compose. Make any changes you want directly in the app.
+     - The client will run on port **:3000**, the server on port **:5500**, and the database must be hosted on your local machine.
+     - Commands:
+       - In `Ems/ems/`: `npm run dev`
+       - In `Ems/Server/`: `npm run start`
 
-    * docker-compose --env-file ./Server/.env.dev up -d --build
+   - **For .env.dev**:
+     - The client runs on port **:3000**, the server on port **:5500**, and the database should be on your host machine.
+     - Command:
+       - Run `docker-compose --env-file ./Server/.env.dev up -d --build`
 
-    - If .env.prod => client runs on :3050 & server :3050/api & db is at mysql contianer
+   - **For .env.prod**:
+     - The client and server both run on port **:3050** (`server` will be at **:3050/api**), and the database is hosted in the MySQL container.
+     - Command:
+       - Run `docker-compose --env-file ./Server/.env.prod up -d --build`
 
-    * docker-compose --env-file ./Server/.env.prod up -d --build
