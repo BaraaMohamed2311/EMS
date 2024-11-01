@@ -119,8 +119,8 @@
     position: absolute;
     left: calc(var(--x) - 10rem);/*to move from center of circle*/ 
     top: calc(var(--y) - 10rem);/*to move from center of circle*/ 
-    width: 20rem;
-    height: 20rem;
+    width: 10rem;
+    height: 10rem;
     border-radius: 50%;
     box-shadow: 1rem 1rem 5rem #e91e6261;
     background-color: var(--main-hovers);

@@ -14,9 +14,9 @@ const router = require("express").Router();
         const GetNumOfAdmins = `SELECT COUNT(*) as count FROM employees e JOIN roles r ON e.emp_id = r.emp_id WHERE r.role_name = 'Admin'`;
 
 
-        const EmpsData = await executeMySqlQuery(GetEmpsData,"Error Getting Num Of Emps");
-        const NumOfSuperAdmins = await executeMySqlQuery(GetNumOfSuperAdmins,"Error Getting Num Of Emps");
-        const NumOfAdmins = await executeMySqlQuery(GetNumOfAdmins,"Error Getting Num Of Emps");
+        const EmpsData = await executeMySqlQuery(GetEmpsData);
+        const NumOfSuperAdmins = await executeMySqlQuery(GetNumOfSuperAdmins);
+        const NumOfAdmins = await executeMySqlQuery(GetNumOfAdmins);
 
 
         if(EmpsData[0] && NumOfSuperAdmins[0] && NumOfAdmins[0] )

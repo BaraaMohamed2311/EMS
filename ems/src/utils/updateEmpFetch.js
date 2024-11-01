@@ -2,10 +2,10 @@
 import userNotification from "./userNotification";
 import statusNotification from "./statusNotification"
 
-export default function updateEmpFetch(url , token , body, actions , setCached_Employees , currPage , router){
+export default function updateEmpFetch(url , token , body, actionsString , setCached_Employees , currPage , router){
     
 
-    fetch(`${process.env.APIKEY}/${url}?actions=${actions}`,{
+    fetch(`${process.env.APIKEY}/${url}?actions=${actionsString}`,{
         method:"PUT",
         headers:{
             authorization:`BEARER ${token}`,

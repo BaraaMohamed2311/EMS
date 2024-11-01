@@ -8,6 +8,7 @@ if (dev === 'development') {
 }
 else{
   require('dotenv').config({ path: './.env.local' }); 
+  console.log("Config Local")
 }
 /**************************/
 const express = require("express");

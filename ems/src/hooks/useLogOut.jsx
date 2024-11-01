@@ -27,7 +27,7 @@ export default function  useLogOut(){
         // hide logout button
         setIsLogin(false)
         // clear user cached employee context 
-        setCached_Employees(new Map());
+        setCached_Employees([]);
         // clear all data in localStorage
         localStorage.clear();
         // send notification

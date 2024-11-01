@@ -85,7 +85,7 @@ export default function UpdateEmpForm({isEditing , setIsEditing , employee_displ
                       ...updated_user_body
                     }
         if (isValid) {
-          updateEmpFetch(url, token, reqBody ,actions , setCached_Employees , currPage , router);
+          updateEmpFetch(url, token, reqBody ,actionString , setCached_Employees , currPage , router);
         }
 
         

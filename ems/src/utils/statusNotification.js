@@ -7,7 +7,7 @@ export default function statusNotification(statusCode){
             return userNotification("error", "Too many Requests Try Again Later");
         
         case 401 :
-            return userNotification("error", "Token Expired, LogIn");
+            return userNotification("error", "Login Again - Token Expired");
         
         case 500 :
             return userNotification("error", "Internal Server Error")

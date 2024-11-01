@@ -39,7 +39,7 @@ function EmployeePage() {
       // create fileReader to read image once recieved from res
       reader.addEventListener('load',()=> UpdateState(reader.result));
       // fetch image
-      getUserImage('/profile/prof-img', employee_displayed.emp_email , reader ,setBlobURL )
+      getUserImage('/profile/prof-img', employee_displayed.emp_email , reader ,setBlobURL ,user_data.token)
     
 
     return ()=>{
@@ -55,27 +55,21 @@ function UpdateState(reader_result){
 
 
   // handle deletion function
-
   async function handleDeletion(url, token, body) {
 
     // if no permission do not delete other user
     if(!user_data.emp_perms.has("Modify Data")){
       return userNotification("error","You Do Not Have Permession to Delete Others")
     }
-    await deleteFetch(url, token, body);
+    deleteFetch(url, token, body);
     // Delete from cache
     await setCached_Employees(prev => {
       // Get the current page's employee array and update it
-      let updatedMap = new Map(prev);
-      console.log("before updatedMap" , updatedMap)
-      const employees = prev.get(currPage) || [];
-      const updatedEmployees = employees.length > 0 ? employees.filter((employee ) => 
-          employee.emp_id !== parseInt(employee_displayed.emp_id )
-      ) : [];
+      let newArray = Array.from(prev);
+        return newArray.filter((employee)=>{
+                return employee_displayed.emp_id !== employee.emp_id;
+        })
       
-      updatedMap.set(currPage , updatedEmployees);
-      console.log("after updatedMap" , updatedMap)
-      return updatedMap;
     })
     router.replace("/private_routes/list");
   }

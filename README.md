@@ -34,11 +34,17 @@
 
 - Used <Image> provided by next for better SEO & performance
 
+
+
 ## Security 
 
 - Used rate limiter to prevent many requests (password discovery attack)
 
 - Used hpp to prevent http pollution requests (duplicate request's parameters)
+
+- Used "?" to pass paramets to SQL instruction instead of direct pass it using ${} to prevent SQL INJECTION Risks
+
+- Used Transaction when deleting user from multiple tables to ensure it's either deleted from all tables or rolled back
 
 - Client side & Server side checking 
     - For images type & size

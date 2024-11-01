@@ -6,10 +6,9 @@ export default function getUserImage(url , emp_email , reader ,setBlobURL , toke
     fetch(`${process.env.APIKEY}${url}?emp_email=${emp_email}`,{
       mode:"cors",
        headers:{
-      Authorization: `BEARER ${token}`
+        Authorization: `BEARER ${token}`
     }
   })
-
     .then(async (res)=>{
       
         statusNotification(res.status);

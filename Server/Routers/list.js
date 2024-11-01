@@ -14,14 +14,15 @@ const mailer = require("../Utils/mailer.js")
 // GET Employees Data
 router.get("/employees",jwtVerify,async (req,res)=>{
     try{
-        const { pagination, size, emp_id, role_name, emp_perms, ...restFilters } = req.query;
-
+        const { pagination, size , emp_id, role_name, emp_perms, ...restFilters } = req.query;
+        
         //Bad Request if modifier id or others doesn't exist
         if(!pagination || !size || !emp_id ) return res.status(400).json({success:false,message:"Bad Request"});
 
+        
 
-        const Modifier_role = await User.getUserRole(emp_id, "Error Getting Role of modifier /employees");
-        const Modifier_perms = new perms(await User.getUserperms(emp_id, "Error Getting perms of modifier /employees"));
+        const Modifier_role = await User.getUserRole(emp_id);
+        const Modifier_perms = new perms(await User.getUserperms(emp_id));
 
     if (Modifier_role === "Employee") {
         return res.status(401).json({ success: false, message: "Employee Role cannot access The list" });
@@ -47,6 +48,8 @@ router.get("/employees",jwtVerify,async (req,res)=>{
     const access_salary = (Modifier_perms.isPermExist("Modify Salary") || Modifier_perms.isPermExist("Display Salary")) ? " e.emp_salary, e.emp_bonus " : " '' AS emp_salary , '' AS emp_bonus "
 
     // Build the final query
+    /* roles filtering exists any way no need to check*/
+    /* we group rows instead of repeating for each new perm */
     const query = `
       SELECT 
         e.emp_id, 
@@ -61,16 +64,16 @@ router.get("/employees",jwtVerify,async (req,res)=>{
         FROM employees e 
         ${roles_JOIN}
         ${perms_JOIN}
-        ${roles_CONDITION || Rest_CONDITION ? " WHERE " : ""} /* roles filtering exists any way no need to check*/
+        ${roles_CONDITION || Rest_CONDITION ? " WHERE " : ""} 
         ${Rest_CONDITION}
         ${roles_CONDITION && Rest_CONDITION ? " AND " : ""}
         ${roles_CONDITION}
-        GROUP BY /* so we could group rows instead of repeating for each new perm */
+        GROUP BY 
             e.emp_id, e.emp_name, r.role_name, e.emp_abscence, e.emp_rate, e.emp_position, e.emp_email, e.emp_salary, e.emp_bonus
         ${perms_CONDITION}
-        LIMIT ${size} OFFSET ${(pagination - 1) * size}`;
-
-      const users = await executeMySqlQuery(query , "Error executing /employees list GET");
+        LIMIT ? OFFSET ?`;
+        // last to parameters are linilt & offset
+      const users = await executeMySqlQuery(query , [ parseInt(size) , parseInt((pagination - 1) * size )]);
 
       if( users && users.length > 0){
         res.status(200).json({success : true , body:users, message:"Successfully Fetched Data"})
@@ -91,116 +94,90 @@ router.get("/employees",jwtVerify,async (req,res)=>{
     }
 })
 
-/************************************************************************************************************************/
+/************************************************************************************************/
 
-    /*
-    Kinds of requests sent to /update-others
-
-    - update user data then we check modifier perms and role and both  action & toUpdate must be MD
-    - update user Role same goes but MR
-    - update user perms same but MP
-    - update user Salary same but MS
-    
-    */
     router.put("/update-others",jwtVerify ,async function(req , res){
         try {   
-                /*
-                    -newRole is string of newRole that will be assigned to user
-                    -newperms is string of all perms will be set to user 
-                   
-                */
-                // let & not const as we will delete emp_salary from userData if no perms
+                // Let & not Const becase they get modified
                     let { modifier_id , emp_id , other_emp_email , role_name : newRole, emp_perms : newperms ,   ...userData} = req.body;
-                // action holds perms needed for changes to happen
-                    const {actions} = req.query;
-
-                //Bad Request if
-                if(!actions || !modifier_id || !emp_id ) return res.status(400 ).json({success:false,message:"Bad Request"});
-
-
+                // Actions
+                    let {actions} = req.query;
+                    actions = actions.split("-")
+                // Bad Request
+                if(!actions || !modifier_id || !emp_id ) 
+                    return res.status(400 ).json({success:false,message:"Bad Request"});
 
                     let failing_messages = [];
-
+                    console.log("action ", actions )
                     // then modifier is different user 
-                    const modifierRole = await User.getUserRole(modifier_id ,"Error Getting modifier Role");
-                    
-                    const userRole = await User.getUserRole(emp_id ,"Error Getting user Role" );
+                    const modifierRole = await User.getUserRole(modifier_id);
+                    const userRole = await User.getUserRole(emp_id );
 
                     // if modifier have same role or higher and permession he can update others
-                    const  modifierperms = await User.getUserperms(modifier_id ,"Error Getting modifier perms");
+                    const  modifierperms = await User.getUserperms(modifier_id);
                     // create set instance of it 
                     let modifierSetperms = new perms(modifierperms);
                     
-                    /**********************************Data Update*********************************************/
-                    if(actions.includes("Modify Data") && modifierSetperms.isPermExist("Modify Data")){
-                        // if modifier has MS do nothing if not remove emp_salary as he dont have access to edit it
-                        userData = modifierSetperms.isPermExist("Modify Salary") ? userData : delete userData.emp_salary ;
-                        
-                        if(modifierRole === "SuperAdmin"){
-
-                            const succeeded = await SuperAdmin.EditOtherUser(emp_id ,userRole , Object.entries(userData))
-
-                                if(!succeeded){
-                                    failing_messages.push({success:false , message: "You Have To Be Admin Or SuperAdmin"})
-                                }
-                             
+/************************************************************************Data Update*********************************************/
+                    if(actions.includes("Modify Data")){
+                        if(modifierSetperms.isPermExist("Modify Data")){
+                            // If  no "Modify Salary" perm we remove salary field to ensure not editing it
+                            userData = modifierSetperms.isPermExist("Modify Salary") ? userData : delete userData.emp_salary ;
+                            
+                            if(modifierRole === "SuperAdmin"){
+                                const succeeded = await SuperAdmin.EditOtherUser(emp_id ,userRole , Object.entries(userData))
+                                    if(!succeeded){
+                                        failing_messages.push({success:false , message: "You Have To Be Admin Or SuperAdmin"})
+                                    }
+                            }
+                            else if (modifierRole === "Admin"){
+                                const succeeded = await Admin.EditOtherUser(emp_id ,userRole , Object.entries(userData)  )
+                                    if(!succeeded){
+                                        failing_messages.push({success:false , message: "Failed To Modify User Data"})
+                                    }
+                                    
+                            }
                         }
-                        else if (modifierRole === "Admin"){
-
-                            const succeeded = await Admin.EditOtherUser(emp_id ,userRole , Object.entries(userData)  )
-            
-                                if(!succeeded){
-                                    failing_messages.push({success:false , message: "Failed To Modify User Data"})
-                                }
-                                
-                      
+                        else{ 
+                            failing_messages.push({success:false , message: "Not Allowed To Modify User Data"})
                         }
-                         
-
                     }
-                    else if(actions.includes("Modify Data") && !modifierSetperms.isPermExist("Modify Data")){ 
-                        failing_messages.push({success:false , message: "Not Allowed To Modify User Data"})
-                    }
-                    /**********************************Role Update*********************************************/
-                    if (actions.includes("Modify Role")   && modifierSetperms.isPermExist("Modify Role")){
-                        // Modidify Role
-
+                    
+                    
+/***************************************************************Role Update*********************************************/
+                    if(actions.includes("Modify Role")){
+                            if(modifierSetperms.isPermExist("Modify Role")){
+                                // Modidify Role
                         if(modifierRole === "SuperAdmin"){
                             const succeeded =await SuperAdmin.ChangeOtherUserRole(emp_id , userRole , newRole , other_emp_email)
-
                                 if(!succeeded){
                                     failing_messages.push({success:false , message: "Failed To Modify User Role"})
                                 }
-
                         }
-                        
-
-                    } 
-                    else if(actions.includes("Modify Role")   && !modifierSetperms.isPermExist("Modify Role")){ // when modifier doesn't have required perm
-                        failing_messages.push({success:false , message: "Not Allowed To Modify User Role"})
+                            }
+                            else{
+                                failing_messages.push({success:false , message: "Not Allowed To Modify User Role"});
+                            }
                     }
-
-                    /**********************************perms Update*********************************************/
-                    if (actions.includes("Modify perms")   && modifierSetperms.isPermExist("Modify perms")){
-                        // Modidify perms
-                        const oldUserperms = await executeMySqlQuery(`SELECT COALESCE((SELECT COALESCE(GROUP_CONCAT(DISTINCT p.perm_name SEPARATOR ', ') , 'None') FROM perms p JOIN employee_perms ep ON p.perm_id = ep.perm_id WHERE ep.emp_id =${emp_id}), 'None') AS perm_name;`,"Error Getting Old User perms");
-                        const oldUserpermsSet=new Set( oldUserperms[0].perm_name.split(", ")) ;
-
-                        if(modifierRole === "SuperAdmin"){
-
-                            const succeeded =await SuperAdmin.ChangeOtherUserperms(emp_id , userRole , newperms , oldUserpermsSet)
-
-                                if(!succeeded){
-                                    failing_messages.push({success:false , message: "Failed To Modify User perms"})
-                                }
-
+/**************************************************************perms Update*********************************************/
+                    if(actions.includes("Modify Perms")){
+                        if (modifierSetperms.isPermExist("Modify Perms")){
+                            // Modidify perms
+                            const oldUserperms = await executeMySqlQuery(`SELECT COALESCE((SELECT COALESCE(GROUP_CONCAT(DISTINCT p.perm_name SEPARATOR ', ') , 'None') FROM perms p JOIN employee_perms ep ON p.perm_id = ep.perm_id WHERE ep.emp_id =${emp_id}), 'None') AS perm_name;`,"Error Getting Old User perms");
+                            const oldUserpermsSet=new Set( oldUserperms[0].perm_name.split(", ")) ;
+                            if(modifierRole === "SuperAdmin"){
+                                const succeeded =await SuperAdmin.ChangeOtherUserperms(emp_id , userRole , newperms , oldUserpermsSet)
+                                    if(!succeeded){
+                                        failing_messages.push({success:false , message: "Failed To Modify User perms"})
+                                    }
+                            }
                         }
-                        
+                        else{ 
+                            failing_messages.push({success:false , message: "Not Allowed To Modify User Permissions"})
+                        }
                     }
-                    else if(actions.includes("Modify perms")   && !modifierSetperms.isPermExist("Modify perms")){ 
-                        failing_messages.push({success:false , message: "Not Allowed To Modify User Permissions"})
-                    }
-                    /****************************************************/
+                    
+/*********************************************************************************************************************/
                     // making sure not sending salary details if user has no perm
                     const access_salary = (modifierSetperms.isPermExist("Modify Salary") || modifierSetperms.isPermExist("Display Salary")) ? " e.emp_salary, e.emp_bonus " : " '' AS emp_salary , '' AS emp_bonus "
                     // left join to include records even if user doesn't exist in roles table
@@ -221,13 +198,13 @@ router.get("/employees",jwtVerify,async (req,res)=>{
                                                     LEFT JOIN employee_perms ep ON e.emp_id = ep.emp_id 
                                                     LEFT JOIN perms p ON ep.perm_id = p.perm_id
                                                     WHERE 
-                                                        e.emp_id = ${emp_id}
+                                                        e.emp_id = ?
                                                         GROUP BY
                                                         e.emp_id, e.emp_name, r.role_name, e.emp_abscence, e.emp_rate, e.emp_position, e.emp_email, e.emp_salary, e.emp_bonus;`;
                         
             
             
-            const UpdateUser = await executeMySqlQuery(getUpdatedUserQuery , "Error Getting Updated User");
+            const UpdateUser = await executeMySqlQuery(getUpdatedUserQuery , [emp_id]);
 
                     /***************************************************/
                     if(failing_messages.length > 0){
@@ -239,7 +216,7 @@ router.get("/employees",jwtVerify,async (req,res)=>{
                     }
         }
         catch (err) {
-            consolLog(`Error In Update Others Api Path ${err} `, "error")
+            consoleLog(`Error In Update Others Api Path ${err} `, "error")
             res.status(500).json({
                 success:false,
                 message:"Error In Update Others Api Path "
@@ -260,16 +237,17 @@ router.delete("/delete-employee", jwtVerify, async (req, res) => {
         if(!modifier_email || !modifier_id || !emp_id || !emp_email  ) return res.status(400).json({success:false,message:"Bad Request"});
         
         
-        let ModifierpermsSet = new perms(await User.getUserperms(modifier_id, "Error Getting User Perm /delete-employee", "Success Getting User Perm /delete-employee"));
+        let ModifierpermsSet = new perms(await User.getUserperms(modifier_id));
         let isAllFulfilled = false;
         
         if (ModifierpermsSet.isPermExist("Delete User")) {
-            const ModifierRole = await User.getUserRole(modifier_id, "Error Getting User Role /delete-employee");
+            const ModifierRole = await User.getUserRole(modifier_id);
+            const otherUserRole = await User.getUserRole(emp_id);
 
             if (ModifierRole === "SuperAdmin") {
-                isAllFulfilled = await SuperAdmin.RemoveOtherUser(emp_id);
+                isAllFulfilled = await SuperAdmin.RemoveOtherUser(emp_id , otherUserRole);
             } else if (ModifierRole === "Admin") {
-                isAllFulfilled = await Admin.RemoveOtherUser(emp_id);
+                isAllFulfilled = await Admin.RemoveOtherUser(emp_id , otherUserRole);
             }
 
             
@@ -277,7 +255,7 @@ router.delete("/delete-employee", jwtVerify, async (req, res) => {
         else{
             return res.json({success:false , message:"Not Allowed To Delete Users"})
         }
-
+        console.log("isAllFulfilled",isAllFulfilled)
         if (isAllFulfilled) {
             const isSent = await mailer(modifier_email, emp_email, "You Got Accepted", `
                 Dear ${emp_name},
@@ -330,17 +308,27 @@ router.get("/registered-approve",jwtVerify,async (req,res)=>{
 
 
                 
-            const ModifierpermsSet = new perms(await User.getUserperms(modifier_id , "Error Getting User Perm /delete-employee"));
+            const ModifierpermsSet = new perms(await User.getUserperms(modifier_id));
 
             if(!ModifierpermsSet.isPermExist("Accept Registered")){
                 return res.json({success:false , message:"You Have No Permission"})
             } 
             
 
-            
-            const query = `SELECT * FROM unregistered_employees ${filtered_emp_email ? `WHERE emp_email = '${filtered_emp_email}'`:""} LIMIT ${size} OFFSET ${(currPage - 1) * size} `
+            /* Safe from SQL INJECTION */
+            let query = `SELECT * FROM unregistered_employees`;
+            const params = [];
 
-            const users = await executeMySqlQuery(query , "Error Finding unregistered_employees");
+            if (filtered_emp_email) {
+                query += ` WHERE emp_email = ?`;
+                params.unshift(filtered_emp_email); // push filtered_emp_email at first element
+            }
+
+            query += ` LIMIT ? OFFSET ?`;
+            params.push(parseInt(size), parseInt((currPage - 1) * size)); // Add size and offset as parameters
+
+            const users = await executeMySqlQuery(query, params);
+
 
 
             if( users && users.length > 0){
@@ -371,7 +359,7 @@ router.post("/registered-approve/accept",jwtVerify,async (req,res)=>{
         // Reqired to accept user and send email
         if(!modifier_id || !modifier_email || !emp_email  ) return res.status(400 ).json({success:false,message:"Bad Request"});
 
-        const ModifierpermsSet = new perms(await User.getUserperms(modifier_id , "Error Getting User Perm /delete-employee"));
+        const ModifierpermsSet = new perms(await User.getUserperms(modifier_id));
 
         
 
@@ -379,9 +367,9 @@ router.post("/registered-approve/accept",jwtVerify,async (req,res)=>{
             return res.json({success:false , message:"You Have No Permission"})
         }
 
-        const LastIdInTable = await executeMySqlQuery("SELECT emp_id FROM employees ORDER BY emp_id DESC LIMIT 1","Error LastIdInTable")
+        const LastIdInTable = await executeMySqlQuery("SELECT emp_id FROM employees ORDER BY emp_id DESC LIMIT 1")
 
-        const accepted_user = await executeMySqlQuery(`SELECT * FROM unregistered_employees WHERE emp_email = '${emp_email}'`,"Error Getting User From Register Table /accept");
+        const accepted_user = await executeMySqlQuery(`SELECT * FROM unregistered_employees WHERE emp_email = ?`,[emp_email]);
         
         // before getting keys and values of user we have to remove old id
         delete accepted_user[0].emp_id;
@@ -393,11 +381,11 @@ router.post("/registered-approve/accept",jwtVerify,async (req,res)=>{
 
 
         // insert with default values and increment id by 1
-        const addToEmployeeTable = await executeMySqlQuery(`INSERT INTO employees (emp_id , ${columns_field} , emp_salary , emp_bonus , emp_abscence , emp_rate) VALUES (${LastIdInTable[0].emp_id + 1},${values_field} , 0 , 0 , 0 , 0)`,"Error Adding To Employee Table");
+        const addToEmployeeTable = await executeMySqlQuery(`INSERT INTO employees (emp_id , ${columns_field} , emp_salary , emp_bonus , emp_abscence , emp_rate) VALUES (${LastIdInTable[0].emp_id + 1},${values_field} , 0 , 0 , 0 , 0)`);
 
 
         // delete from registered table after making sure he was added
-        await executeMySqlQuery(`DELETE FROM unregistered_employees WHERE emp_email = '${emp_email}'`,"Error Deleting From Register Table")
+        await executeMySqlQuery(`DELETE FROM unregistered_employees WHERE emp_email = ?`,[emp_email])
 
 
         
@@ -447,14 +435,14 @@ router.delete("/registered-approve/decline",jwtVerify,async (req,res)=>{
         if(!modifier_id || !modifier_email || !declined_user_email   ) return res.status(400).json({success:false,message:"Bad Request"});
         
         
-        const ModifierpermsSet = new perms(await User.getUserperms(modifier_id , "Error Getting User Perm /delete-employee"));
+        const ModifierpermsSet = new perms(await User.getUserperms(modifier_id));
 
         if(!ModifierpermsSet.isPermExist("Accept Registered")){
             return res.json({success:false , message:"You Have No Permission"})
         }
 
         // delete from registered table after making sure he was added
-        const deleteFromRigesterTable = await executeMySqlQuery(`DELETE FROM unregistered_employees WHERE emp_email = '${declined_user_email}'`,"Error Deleting From Register Table")
+        const deleteFromRigesterTable = await executeMySqlQuery(`DELETE FROM unregistered_employees WHERE emp_email = ?`,[declined_user_email])
 
 
         if(deleteFromRigesterTable){

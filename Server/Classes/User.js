@@ -26,25 +26,25 @@ class User {
         // update data query
         const query = `UPDATE employees SET ${fields} WHERE emp_id = ${emp_id};`
         // update in db
-        await executeMySqlQuery(query , "Error editUserData Method")
+        await executeMySqlQuery(query)
 
     }
 
-    static async getUserRole(emp_id=null , err_msg , emp_email=null ){
+    static async getUserRole(emp_id=null  , emp_email=null ){
         //Finds Role of user using id or email & by default Role is Employee if not defined or user not exist
         const query = `SELECT COALESCE( (SELECT NULLIF(r.role_name, '') FROM roles r WHERE ${emp_id ? `emp_id = ${emp_id}` :`emp_email = '${emp_email}'`} ),'Employee') AS role_name;
 `
             // [0] as result is in array form but Role field has a  single value as string 
-            const result = await executeMySqlQuery(query , err_msg);
+            const result = await executeMySqlQuery(query);
             return result[0].role_name ; 
      
     }
 
-    static async getUserperms(emp_id , err_msg ){
+    static async getUserperms(emp_id){
         //COALESCE(NULLIF()) to replace empty string and null with None by default
         const query = `SELECT p.perm_name FROM perms p JOIN employee_perms ep ON p.perm_id = ep.perm_id WHERE ep.emp_id = ${emp_id} `
         // [0] as result is in array form but perms field has a single value as string 
-        const result = await executeMySqlQuery(query , err_msg);
+        const result = await executeMySqlQuery(query );
             return result.length > 0 ? result.map((perm)=> perm.perm_name) : ["None"] ;  
         
     }

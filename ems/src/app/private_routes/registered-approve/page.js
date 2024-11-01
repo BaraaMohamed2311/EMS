@@ -19,7 +19,6 @@ function registeredApprovePage() {
 
     window.addEventListener("resize",ResponsiveTable );
 
-
     function ResponsiveTable(){
       if( window.innerWidth <= 1200){
         setIsSmallScreen(true)
@@ -66,7 +65,6 @@ function registeredApprovePage() {
       .then((data)=>{
         if(data.success){
           userNotification("success",data.message);
-
           setRegisteredUsers(data.body);
         }
         else{
@@ -165,7 +163,7 @@ function registeredApprovePage() {
   
   return (
     <main className={styles.registered_approve} >
-      <SearchOptions  EMAILREF={EMAILREF} clearBtn ={handleClearFilterOption} activateFilterBtn={Fetch_UnRegistered_Users} currPage={currPage} />
+      <SearchOptions  EMAILREF={EMAILREF} clearBtn ={handleClearFilterOption} handleFilterOption={Fetch_UnRegistered_Users} currPage={currPage} />
       <Sheet
       variant="solid"
       invertedColors

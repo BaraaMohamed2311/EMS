@@ -51,7 +51,6 @@ const storage = new GridFsStorage({
     try{ 
         if(gfs_bucket){
         // search for user
-
         const employee = await Employees_Img_module.findOne({emp_email:req.query["emp_email"]});
 
         // let cursor find and point to it's img in bucket

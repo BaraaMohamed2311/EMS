@@ -20,7 +20,7 @@ const consoleLog = require("../Utils/consoleLog.js")
                 return res.status(400).json({success:false,message:"Bad Request"});
             
 
-            let user = await executeMySqlQuery(`SELECT * FROM employees WHERE emp_email = '${emp_email}'`)
+            let user = await executeMySqlQuery(`SELECT * FROM employees WHERE emp_email = ?`,[emp_email])
 
             if ( user.length < 1) {
                 return res.status(404).json({
@@ -31,9 +31,9 @@ const consoleLog = require("../Utils/consoleLog.js")
             
             
             // get user role and send to response
-            user[0].role_name =  await User.getUserRole(user[0].emp_id , "Error Get Role Login");
+            user[0].role_name =  await User.getUserRole(user[0].emp_id);
 
-            user[0].emp_perms =  await User.getUserperms(user[0].emp_id , "Error Get perms Login");
+            user[0].emp_perms =  await User.getUserperms(user[0].emp_id);
 
 
             // Compare request's password with hashed password
@@ -79,8 +79,8 @@ const consoleLog = require("../Utils/consoleLog.js")
                 //Bad Request if
                 if(!user.emp_email || !user.emp_password) return res.status(400 ).json({success:false,message:"Bad Request"});
 
-                const check_unregistered_table = await isExist(`SELECT * FROM unregistered_employees WHERE emp_email = "${user.emp_email}"`);
-                const check_employees_table = await isExist(`SELECT * FROM employees WHERE emp_email = "${user.emp_email}"`);
+                const check_unregistered_table = await isExist(`SELECT * FROM unregistered_employees WHERE emp_email = ?`,[user.emp_email]);
+                const check_employees_table = await isExist(`SELECT * FROM employees WHERE emp_email = ?`,[user.emp_email]);
 
                 if (check_unregistered_table.exists) {
                     return res.json({ success: false, message: "User Already staged & Waiting For Approval" });
@@ -117,7 +117,7 @@ const consoleLog = require("../Utils/consoleLog.js")
             const query = `INSERT INTO unregistered_employees (${columns_field}) VALUES (${values_field})`
 
 
-            const registered = await executeMySqlQuery( query ,"Error Registering Employee" );
+            const registered = await executeMySqlQuery( query );
 
             if(registered){
                 res.json({success:true,message:"Successfully Staged Employee To Wait List"})
@@ -150,8 +150,8 @@ const consoleLog = require("../Utils/consoleLog.js")
 
 
             // first check user exists 
-            const query = `SELECT * FROM employees WHERE emp_id = ${emp_id}`
-            const { exists } = await isExist(query);
+            const query = `SELECT * FROM employees WHERE emp_id = ?`
+            const { exists } = await isExist(query,[emp_id]);
             // make sure to remove fields that cannot be changed by user 
             userData = fixedFields(userData);
             if(exists){
@@ -190,8 +190,8 @@ const consoleLog = require("../Utils/consoleLog.js")
 
 
             // search for user inside employees table
-            const query = `SELECT * FROM employees WHERE emp_email ='${emp_email}'`
-            const userinTable = await isExist(query);
+            const query = `SELECT * FROM employees WHERE emp_email =?`
+            const userinTable = await isExist(query,[emp_email]);
             // USER NOT FOUND At EMPLOYEES TABLE
             if(!userinTable.exists) 
                 res.status(404).json({
@@ -277,7 +277,7 @@ const consoleLog = require("../Utils/consoleLog.js")
                     // then token is still valid and we save new password into db
                     const hashedPassword = await User.hashPassword(emp_password);
 
-                    const isReseted = await executeMySqlQuery(`UPDATE employees SET emp_password = ${`"${hashedPassword}"`} WHERE emp_id = ${resetTokenForUser.emp_id}`)
+                    const isReseted = await executeMySqlQuery(`UPDATE employees SET emp_password = ? WHERE emp_id = ?`,[hashedPassword , resetTokenForUser.emp_id])
                     
                     if(isReseted){
                         res.status(200).json({
