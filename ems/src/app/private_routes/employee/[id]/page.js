@@ -46,7 +46,7 @@ function EmployeePage() {
       reader.removeEventListener('load', UpdateState)
     }
 
-} ,[])
+} ,[employee_displayed.emp_email, user_data.token]);
 
 function UpdateState(reader_result){
       setBlobURL(reader_result);

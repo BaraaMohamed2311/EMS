@@ -5,7 +5,7 @@ import { useUserDataContext } from "../../contexts/user_data";
 import LoginPage from "../login/page";
 
 export default function private_routes(WrappedComponent) {
-  return (props) => {
+  const PrivateRoute = (props) => {
     const [isValid, setIsValid] = useState(false); // For handling initial loading state
     const [isLoading, setIsLoading] = useState(true); // by default show loader till checking ends
     const { user_data } = useUserDataContext();
@@ -34,4 +34,6 @@ export default function private_routes(WrappedComponent) {
       return <LoginPage />;
     }
   };
+
+  return PrivateRoute;
 }

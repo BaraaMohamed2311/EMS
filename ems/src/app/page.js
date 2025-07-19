@@ -6,7 +6,7 @@ import { useEffect } from "react";
 
 export default function Home() {
   // useClosure to create debouncer to limit number of execution
-    function useDebounce(callback, delay) {
+    function debounce(callback, delay) {
         let timer;
         return function (...args) {
             clearTimeout(timer);
@@ -18,7 +18,7 @@ export default function Home() {
 
     useEffect(() => {
         const roles_cards = document.querySelectorAll(".role-cards");
-        const debouncedHandleMouseMoveGlow = useDebounce(handleMouseMoveCircle, 200);
+        const debouncedHandleMouseMoveGlow = debounce(handleMouseMoveCircle, 200);
 
         roles_cards.forEach((role_card) => {
             role_card.addEventListener("pointermove", debouncedHandleMouseMoveGlow);

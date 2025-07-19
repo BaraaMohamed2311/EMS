@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import private_routes from "../page";
 import styles from "./dashboard.module.css";
 import { useUserDataContext } from "@/contexts/user_data";
@@ -11,7 +11,7 @@ import MoneyShortner from "@/utils/MoneyShortner";
 function DashboardPage() {
     const { user_data } = useUserDataContext();
     const [displayedData, setDisplayedData] = useState({});
-    let chart;
+    let chart = useRef(null);
     // Set up dynamic import inside useEffect
     useEffect(() => {
         chart = new CanvasJS.Chart("chartContainer", {

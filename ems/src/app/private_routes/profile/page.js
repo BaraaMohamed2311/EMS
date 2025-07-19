@@ -11,7 +11,7 @@ import Link from "next/link";
 import getUserImage from "@/utils/getUserImg";
 import MoneyShortner from "@/utils/MoneyShortner"
 
-function profilePage() {
+function ProfilePage() {
   
 
   let {user_data} = useUserDataContext();
@@ -41,7 +41,7 @@ function profilePage() {
       reader.removeEventListener('load', CacheImageLocalStorage)
     }
 
-} ,[])
+} ,[user_data.emp_email,user_data.token])
 
 
   function handleImginput(e){
@@ -104,4 +104,4 @@ function profilePage() {
 }
 
 
-export default  private_routes(profilePage)
+export default  private_routes(ProfilePage)

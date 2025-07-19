@@ -8,7 +8,7 @@ import userNotification from "@/utils/userNotification";
 import statusNotification from "@/utils/statusNotification"
 import { useRouter } from "next/navigation";
 import SearchOptions from "@/components/SearchOptions/SearchOptions";
-function registeredApprovePage() {
+function RegisteredApprovePage() {
 
 
   let [ isSmallScreen , setIsSmallScreen ] = useState(false);
@@ -232,4 +232,4 @@ function registeredApprovePage() {
 }
 
 
-export default  private_routes(registeredApprovePage)
+export default  private_routes(RegisteredApprovePage)
