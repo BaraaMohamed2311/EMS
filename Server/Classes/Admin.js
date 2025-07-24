@@ -6,8 +6,8 @@ const consoleLog = require("../Utils/consoleLog");
 Admin should be able to do
 */
 class Admin extends User {
-    static priority = 50; // we are going to use priority to check that user is editing people with lower or equal priority
-    constructor(){}
+    static priority = 50; 
+
     
     getPriority(){
         return this.priority

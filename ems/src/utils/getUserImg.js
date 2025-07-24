@@ -23,7 +23,7 @@ export default function getUserImage(url , emp_email , reader ,setBlobURL , toke
       .then(async (data)=>{
         // stop executing and send notification message if type is json
         if(data.type === "application/json"){
-          return userNotification("error",data.res.message);
+          return userNotification("warning",data.res.message);
         }
         // if not then create blob object of image
         if(data.res && data.res.size > 0){

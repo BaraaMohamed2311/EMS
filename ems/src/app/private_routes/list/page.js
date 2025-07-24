@@ -20,7 +20,7 @@ function ListPage() {
   let [filteredResults , setFilteredResults] = useState([]); // as array not Map cuz we will not cache "pageNum":[{},{},...] like we did with cachedContext
   // 
   let [currPage , setCurrPage ] = useState(1);
-  const sizeOfPage = 15;
+  const sizeOfPage = 12;
 
 
   // Refrences

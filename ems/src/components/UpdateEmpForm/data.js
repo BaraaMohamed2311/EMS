@@ -41,6 +41,15 @@ let inputs_info = [
         
 
     }
+    ,
+    {
+
+        label:"Rate",
+        type:"Number",
+        name:"emp_rate",
+        
+
+    }
     
 ];
 

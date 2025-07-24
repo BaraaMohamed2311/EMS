@@ -12,9 +12,11 @@ import { useUserDataContext } from '@/contexts/user_data';
 export default function BasicTable({currPage , setCurrPage , sizeOfPage , isFiltered , filteredResults}) {
 
   let [ isSmallScreen , setIsSmallScreen ] = useState(false);
-    const router = useRouter()
-    const {user_data} = useUserDataContext();
-    let {cached_employees , setCached_Employees} = useCachedEmployeesContext();
+  let [numOfPages , setNumOfPages] = useState(1);
+  const router = useRouter()
+  const {user_data} = useUserDataContext();
+  let {cached_employees , setCached_Employees} = useCachedEmployeesContext();
+
 
   useEffect(()=>{
     // check responsibility on first render
@@ -29,6 +31,9 @@ export default function BasicTable({currPage , setCurrPage , sizeOfPage , isFilt
         setIsSmallScreen(false)
       }
   }
+
+    
+
     return ()=>{
       window.removeEventListener("resize",ResponsiveTable )
     }
@@ -52,6 +57,7 @@ export default function BasicTable({currPage , setCurrPage , sizeOfPage , isFilt
     })
     .then(data=>{
       if(data && data.success){
+        setNumOfPages(data.numOfPages || 1);
         
           // if first render just return res array if not push it to previous where previous comes first
           setCached_Employees((prev)=>{
@@ -158,7 +164,7 @@ export default function BasicTable({currPage , setCurrPage , sizeOfPage , isFilt
 
       <div className={styles.table_btn_wrapper}>
         <button id='prev' onClick={handlePagination} className="table-btn"><ion-icon name="chevron-back-outline"></ion-icon></button>
-        <span className='currpage'>{currPage}</span>
+        <span className='currpage'>{currPage} - {numOfPages}</span>
         <button id='next' onClick={handlePagination} className="table-btn"><ion-icon name="chevron-forward-outline"></ion-icon></button>
       </div>
     </div>

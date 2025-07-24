@@ -109,6 +109,9 @@ function UpdateState(reader_result){
           <div className={styles["employee-details"]}>
             <ul className={styles["activity-list"]}>
               <li>
+                <strong>Rating:</strong> <span className={styles.rating}>{employee_displayed.emp_rate || "Not Rated"}</span>
+              </li>
+              <li>
                 <strong>This Month Bonus:</strong> 
                 <span className={(user_data.emp_perms && (user_data.emp_perms.has("Modify Salary") || user_data.emp_perms.has("Display Salary")) )? "" : styles.hide_from_user}>
                   {user_data.emp_perms && (user_data.emp_perms.has("Modify Salary") || user_data.emp_perms.has("Display Salary")) ? MoneyShortner(employee_displayed.emp_bonus) : "Not Accessible"  }

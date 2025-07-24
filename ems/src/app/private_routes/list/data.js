@@ -6,10 +6,7 @@ let selectsElementsData = [
         key:"By Position",
         label:"By Position",
         name:"emp_position",
-        options:[
-            ...global_jobs,
-            {value:"Position Filter", text:"Position Filter" , selected : true}
-        ],
+        options:global_jobs,
         
     },
     {   
@@ -17,10 +14,7 @@ let selectsElementsData = [
         key:"By Role",
         label:"By Role",
         name:"role_name",
-        options:[
-            ...global_roles,
-            {value:"Role Filter", text:"Role Filter" , selected : true}
-        ],
+        options:global_roles,
         
     },
     {   
@@ -28,11 +22,7 @@ let selectsElementsData = [
         key:"By Perms",
         label:"By Perms",
         name:"emp_perms",
-        options:[
-            ...global_perms,
-            {value:"Perms Filter", text:"Perms Filter" , selected : true}
-        ],
-        
+        options:global_perms,
     }
 
 ]

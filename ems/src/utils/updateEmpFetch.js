@@ -34,14 +34,13 @@ export default function updateEmpFetch(url , token , body, actionsString , setCa
                     })
                     
                 })
-                userNotification("success", data.message);
-                router.replace("/private_routes/list")
+                
+                data.messages.forEach((messageObj)=> userNotification(messageObj.success ?"success" : "error", messageObj.message));
+                router.replace("/private_routes/list");
+                
             }
-            // if failed then some unauthorized modifications was attempted
-            else if (data && !data.success){
-                userNotification("error", data.message);
-                data.messages.forEach((message)=> userNotification("warning", message));
-            }
+            console.log("data", data)
+            
         
     })
     .catch((err)=>{

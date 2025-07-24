@@ -22,15 +22,15 @@ export default function UpdateEmpForm({isEditing , setIsEditing , employee_displ
      function update_handler(e, url, token) {
         e.preventDefault();
         // get updated user data and actions that were made
-        let {updated_user_body , actionString} = checkActionsMade();
+        let {updatedEmployeeData , actionString} = checkActionsMade();
         
 
         const reqBody = {
                       modifier_id: user_data.emp_id,
                       
                       emp_id: employee_displayed.emp_id,
-                      other_emp_email:employee_displayed.emp_email,
-                      ...updated_user_body
+                      employee_emp_email:employee_displayed.emp_email,
+                      ...updatedEmployeeData
                     }
 
           updateEmpFetch(url, token, reqBody ,actionString , setCached_Employees , currPage , router);
@@ -42,7 +42,7 @@ export default function UpdateEmpForm({isEditing , setIsEditing , employee_displ
       function checkActionsMade(){
 
         let actions = [];
-        let updated_user_body = {};
+        let updatedEmployeeData = {};
         const employee_displayed_perms = new Set(employee_displayed.emp_perms.split(", "));
 
     // ========= Modify Data =========
@@ -59,7 +59,7 @@ export default function UpdateEmpForm({isEditing , setIsEditing , employee_displ
           
           // we check at first that input element is rendered using current of reference
           else if (inputsBoxsRef.current[input_info.name] && (inputsBoxsRef.current[input_info.name].value !== employee_displayed[input_info.name])) {
-              updated_user_body[input_info.name] = inputsBoxsRef.current[input_info.name].value;
+              updatedEmployeeData[input_info.name] = inputsBoxsRef.current[input_info.name].value;
             if (!actions.includes("Modify Data")) actions.push("Modify Data"); // Add "MD" if not already added
           }
           
@@ -73,7 +73,7 @@ export default function UpdateEmpForm({isEditing , setIsEditing , employee_displ
           }
           // we check at first that input element is rendered using current of reference
           if (selectBoxsRef.current[select_options.select_position_options.name] && (selectBoxsRef.current[select_options.select_position_options.name].value !== employee_displayed[select_options.select_position_options.name])) {
-            updated_user_body[select_options.select_position_options.name] = selectBoxsRef.current[select_options.select_position_options.name].value;
+            updatedEmployeeData[select_options.select_position_options.name] = selectBoxsRef.current[select_options.select_position_options.name].value;
             if (!actions.includes("Modify Data")) actions.push("Modify Data"); 
           }
 
@@ -87,7 +87,7 @@ export default function UpdateEmpForm({isEditing , setIsEditing , employee_displ
           }
           // we check at first that input element is rendered using current of reference
           if (selectBoxsRef.current[select_options.select_role_options.name] && (selectBoxsRef.current[select_options.select_role_options.name].value !== employee_displayed[select_options.select_role_options.name])) {
-            updated_user_body[select_options.select_role_options.name] = selectBoxsRef.current[select_options.select_role_options.name].value;
+            updatedEmployeeData[select_options.select_role_options.name] = selectBoxsRef.current[select_options.select_role_options.name].value;
             if (!actions.includes("Modify Role")) actions.push("Modify Role"); // Add "MR" if not already added
           }
         
@@ -101,21 +101,21 @@ export default function UpdateEmpForm({isEditing , setIsEditing , employee_displ
           
           const permAdded = checkBoxsRef.current[check_box_info.name].checked !== employee_displayed_perms.has(check_box_info.value) && checkBoxsRef.current[check_box_info.name].checked ;
           const permStillExist = checkBoxsRef.current[check_box_info.name].checked && employee_displayed_perms.has(check_box_info.value);
-          console.log(check_box_info.name,"permChanged", permAdded,"permNotChanged", permStillExist);
+
           if (checkBoxsRef.current[check_box_info.name] &&  permAdded || permStillExist) {
             updated_emp_perms.push(check_box_info.value);
             if (!actions.includes("Modify Perms")) actions.push("Modify Perms"); // Add "MP" if not already added
           }
         });
         console.log("Updated Permissions:", updated_emp_perms);
-        updated_user_body.emp_perms = updated_emp_perms.join(", ");
+        updatedEmployeeData.newperms = updated_emp_perms.join(", ");
 
       
         // Join actions array to form the action string
         let actionString = actions.join("-");
 
         return {
-          updated_user_body,
+          updatedEmployeeData,
           actionString,
           
         };

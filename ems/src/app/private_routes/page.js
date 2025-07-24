@@ -1,38 +1,46 @@
 "use client"
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import checkToken from "@/utils/checkToken";
 import { useUserDataContext } from "../../contexts/user_data";
-import LoginPage from "../login/page";
 
 export default function private_routes(WrappedComponent) {
   const PrivateRoute = (props) => {
-    const [isValid, setIsValid] = useState(false); // For handling initial loading state
-    const [isLoading, setIsLoading] = useState(true); // by default show loader till checking ends
+    const [isValid, setIsValid] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
     const { user_data } = useUserDataContext();
+    const router = useRouter();
 
-    useEffect( () => {
+    useEffect(() => {
       if (user_data.token) {
-        // Validate the token
-        checkToken(user_data.token, setIsValid ,setIsLoading)
-      } 
+        checkToken(user_data.token, setIsValid, setIsLoading);
+      } else {
+        setIsValid(false);
+        setIsLoading(false);
+      }
     }, [user_data.token]);
 
-// we display page loader with golbal styles from global.css until isValid state resolved
-    if(isLoading){
+    useEffect(() => {
+      if (!isLoading && !isValid) {
+        router.push("/login"); // Navigate to login page
+      }
+    }, [isLoading, isValid]);
+
+    if (isLoading) {
       return (
         <div className="loadingScreen">
           <div className="loader"></div>
         </div>
-      )
+      );
     }
 
-
-    // Handle the result of the token validation
+    // Only render if valid
     if (isValid) {
       return <WrappedComponent {...props} />;
-    } else {
-      return <LoginPage />;
     }
+
+    // Return null to avoid flashing
+    return null;
   };
 
   return PrivateRoute;

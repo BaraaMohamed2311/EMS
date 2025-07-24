@@ -1,23 +1,17 @@
 
-/*Any user can get his data or modify it */
-const connectionPool = require("../Utils/connect_ems_db");
+
 const stringifyFields = require("../Utils/stringifyFields");
 const executeMySqlQuery = require("../Utils/executeMySqlQuery");
 const bcrypt = require("bcrypt")
 class User {
-    // extracting fields
-    constructor({emp_id,emp_email,emp_name,emp_role , emp_salary , emp_abscence , emp_bonus , emp_rate , emp_position , emp_password}){
-        this.emp_id = emp_id
-        this.emp_email = emp_email ;
-        this.emp_name = emp_name ;
-        this.emp_salary = emp_salary  ;
-        this.emp_abscence = emp_abscence ;
-        this.emp_bonus = emp_bonus ;
-        this.emp_rate = emp_rate ;
-        this.emp_position = emp_position ;
-        this.emp_password = emp_password ;
-     
-        }
+
+
+    static async emailExists( emp_email){
+        const query = `SELECT emp_email FROM  employees WHERE emp_email = "${emp_email}"`
+        const result = await executeMySqlQuery(query)
+
+        return result.length > 0 ; // if length is greater than 0 then email exists
+    }
 
 
     static async editUserData(emp_id ,entries){
