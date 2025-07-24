@@ -32,12 +32,14 @@ export default function updateEmpFetch(url , token , body, actionsString , setCa
                             return data.body;
                         }
                     })
-                        
+                    
                 })
+                userNotification("success", data.message);
                 router.replace("/private_routes/list")
             }
             // if failed then some unauthorized modifications was attempted
             else if (data && !data.success){
+                userNotification("error", data.message);
                 data.messages.forEach((message)=> userNotification("warning", message));
             }
         

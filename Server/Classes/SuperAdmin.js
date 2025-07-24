@@ -32,7 +32,7 @@ class SuperAdmin extends User {
     
     // this updates emp_perms field in perms table
     static async ChangeOtherUserperms(emp_id , otherUserRole , StringOfNewperms , oldUserpermsSet){
-        console.log("Changing Perms",otherUserRole , StringOfNewperms , oldUserpermsSet)
+        
         return new Promise(async (resolve , reject )=>{
             try{
                 

@@ -4,7 +4,6 @@ let inputs_info = [
         label:"Email",
         name:"Email",
         type:"email",
-        ref: null,
         isRequired:true
 
     },
@@ -13,7 +12,6 @@ let inputs_info = [
         label:"Password",
         name:"Password",
         type:"password",
-        ref: null,
         isRequired:true
     },
     

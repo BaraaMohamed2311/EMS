@@ -11,92 +11,122 @@ export default function UpdateEmpForm({isEditing , setIsEditing , employee_displ
     
     let [formBtnState, setFormBtnState] = useState("Update");
     let [isLoadingBtn , setIsLoadingBtn ] = useState(false);
-    let checkBoxsRef = useRef([]);
+    let inputsBoxsRef = useRef({});
+    let checkBoxsRef = useRef({});
+    let selectBoxsRef = useRef({});
     const {setCached_Employees} = useCachedEmployeesContext()
     let {user_data} = useUserDataContext()
     const router =useRouter();
-    /*********************************************************/
 
-    /*** All Input Elements are assigned refrence wether they are rendered or not***/
-    inputs_info.forEach((input) => {
-        input.ref = useRef();
-      });
-      select_options.select_position_options.ref = useRef();
-      select_options.select_role_options.ref = useRef();
-      check_box.forEach((box) => {
-        box.ref = useRef();
-      });
-    /****************************************/
-    // update handler to send update request
+/***************************************update_handler***************************************/
      function update_handler(e, url, token) {
         e.preventDefault();
-      
+        // get updated user data and actions that were made
+        let {updated_user_body , actionString} = checkActionsMade();
+        
+
+        const reqBody = {
+                      modifier_id: user_data.emp_id,
+                      
+                      emp_id: employee_displayed.emp_id,
+                      other_emp_email:employee_displayed.emp_email,
+                      ...updated_user_body
+                    }
+
+          updateEmpFetch(url, token, reqBody ,actionString , setCached_Employees , currPage , router);
+        
+
+        
+      }
+/***************************************checkActionsMade***************************************/
+      function checkActionsMade(){
+
         let actions = [];
         let updated_user_body = {};
-        let isValid = true;
+        const employee_displayed_perms = new Set(employee_displayed.emp_perms.split(", "));
 
-        // First loop: inputs_info and select_position_options
-        [...inputs_info, select_options.select_position_options].forEach((input) => {
+    // ========= Modify Data =========
+
+       // === 1. Check for changes in general input fields
+
+        inputs_info.forEach((input_info) => {
           
-          if ( input.ref.current && !input.ref.current.value) {
+          if ( inputsBoxsRef.current[input_info.name] && !inputsBoxsRef.current[input_info.name].value) {
             userNotification("error", "Input fields cannot be empty");
-            isValid = false;
+
+            return
           }
+          
           // we check at first that input element is rendered using current of reference
-          if (input.ref.current && (input.ref.current.value !== employee_displayed[input.name])) {
-              updated_user_body[input.name] = input.ref.current.value;
+          else if (inputsBoxsRef.current[input_info.name] && (inputsBoxsRef.current[input_info.name].value !== employee_displayed[input_info.name])) {
+              updated_user_body[input_info.name] = inputsBoxsRef.current[input_info.name].value;
             if (!actions.includes("Modify Data")) actions.push("Modify Data"); // Add "MD" if not already added
           }
+          
         });
-      
-        // Second loop: select_role_options
-        [select_options.select_role_options].forEach((input) => {
-          if (input.ref.current && !input.ref.current.value) {
+
+        // === 2. Check for changes in position ===
+
+        if (selectBoxsRef.current[select_options.select_position_options.name] && !selectBoxsRef.current[select_options.select_position_options.name].value) {
             userNotification("error", "Input fields cannot be empty");
-            isValid = false;
+
           }
           // we check at first that input element is rendered using current of reference
-          if (input.ref.current && (input.ref.current.value !== employee_displayed[input.name])) {
-            updated_user_body[input.name] = input.ref.current.value;
+          if (selectBoxsRef.current[select_options.select_position_options.name] && (selectBoxsRef.current[select_options.select_position_options.name].value !== employee_displayed[select_options.select_position_options.name])) {
+            updated_user_body[select_options.select_position_options.name] = selectBoxsRef.current[select_options.select_position_options.name].value;
+            if (!actions.includes("Modify Data")) actions.push("Modify Data"); 
+          }
+
+
+      // ========= Modify Role =========
+        
+        
+          if (selectBoxsRef.current[select_options.select_role_options.name] && !selectBoxsRef.current[select_options.select_role_options.name].value) {
+            userNotification("error", "Input fields cannot be empty");
+
+          }
+          // we check at first that input element is rendered using current of reference
+          if (selectBoxsRef.current[select_options.select_role_options.name] && (selectBoxsRef.current[select_options.select_role_options.name].value !== employee_displayed[select_options.select_role_options.name])) {
+            updated_user_body[select_options.select_role_options.name] = selectBoxsRef.current[select_options.select_role_options.name].value;
             if (!actions.includes("Modify Role")) actions.push("Modify Role"); // Add "MR" if not already added
           }
-        });
+        
       
-        // Third loop: check_box
+      // ========= Modify Permissions =========
+        
         let updated_emp_perms = [];
-        check_box.forEach((box) => {
-          // we check at first that input element is rendered using current of reference
-          if (box.ref.current && box.ref.current.checked) {
-            updated_emp_perms.push(box.value);
+        check_box.forEach((check_box_info) => {
+          
+          // Check if permission was changed or not and if not it gets pushed to updated_emp_perms
+          
+          const permAdded = checkBoxsRef.current[check_box_info.name].checked !== employee_displayed_perms.has(check_box_info.value) && checkBoxsRef.current[check_box_info.name].checked ;
+          const permStillExist = checkBoxsRef.current[check_box_info.name].checked && employee_displayed_perms.has(check_box_info.value);
+          console.log(check_box_info.name,"permChanged", permAdded,"permNotChanged", permStillExist);
+          if (checkBoxsRef.current[check_box_info.name] &&  permAdded || permStillExist) {
+            updated_emp_perms.push(check_box_info.value);
             if (!actions.includes("Modify Perms")) actions.push("Modify Perms"); // Add "MP" if not already added
           }
         });
-      
+        console.log("Updated Permissions:", updated_emp_perms);
         updated_user_body.emp_perms = updated_emp_perms.join(", ");
 
       
         // Join actions array to form the action string
         let actionString = actions.join("-");
-        /*******************/
-        const reqBody = {
-                      modifier_id: user_data.emp_id,
-                      emp_id: employee_displayed.emp_id,
-                      other_emp_email:employee_displayed.emp_email,
-                      ...updated_user_body
-                    }
-        if (isValid) {
-          updateEmpFetch(url, token, reqBody ,actionString , setCached_Employees , currPage , router);
-        }
 
-        
-      }
-      
+        return {
+          updated_user_body,
+          actionString,
+          
+        };
 
+    }
     return (
         <div className={styles["update-emp-page"]}>
             <div className={styles["center"]}>
                 {/* we have to check user modifier perms to check which inputs are displayed for editable fields  */}
                 <Form 
+                    references ={{ inputsBoxsRef: inputsBoxsRef, checkBoxsRef: checkBoxsRef ,selectBoxsRef: selectBoxsRef}} 
                     form_handler = {(e)=>update_handler(e ,"list/update-others" , user_data.token )}
                     // add employee_displayed to form to show prev values of inputs
                     employee_displayed = {employee_displayed} 

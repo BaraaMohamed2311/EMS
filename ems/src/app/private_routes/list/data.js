@@ -36,6 +36,6 @@ let selectsElementsData = [
     }
 
 ]
-
+ 
 
 export  default selectsElementsData

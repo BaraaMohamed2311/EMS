@@ -11,6 +11,7 @@ export default function ForgetPasswordPage() {
     const router = useRouter();
     const PASS1_REF = useRef();
     const PASS2_REF = useRef();
+    
     const {userId , resetToken} = useParams();
   
   /**************************************/
@@ -76,7 +77,7 @@ export default function ForgetPasswordPage() {
                         ref: PASS2_REF,
                         isRequired:true
 
-                    }]} formKind={"forget-password"}/>
+                    }]} formKind={"forget_pass_form"}/>
         </div>
       </div>
     </>

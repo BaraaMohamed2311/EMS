@@ -9,8 +9,8 @@ import userNotification from "@/utils/userNotification";
 export default function ForgetPasswordPage() {
     let [formBtnState, setFormBtnState] = useState("Request Link");
 
-    const EMAIL_REF = useRef()
-
+  
+    let inputsBoxsRef = useRef({});
   /**************************************/
   function login_handler(event){
     // preventing refresh
@@ -56,14 +56,19 @@ export default function ForgetPasswordPage() {
       <div className={styles["forget-password"]}>
         <div className={styles["center"]}>
           <h1>Email Check</h1>
-          <Form form_handler={login_handler} formBtnState = {formBtnState} inputs_info = { [{
+          <Form 
+            form_handler={login_handler} 
+            formBtnState = {formBtnState} 
+            inputs_info = { [{
                         id:"forget_password",
                         label:"Type Your Email",
                         type:"email",
-                        ref: EMAIL_REF,
                         isRequired:true
 
-                    }]} formKind={"forget-password"}/>
+                    }]} 
+            formKind={"forget_pass_form"}
+            references ={{inputsBoxsRef:inputsBoxsRef}}
+            />
         </div>
       </div>
     </>

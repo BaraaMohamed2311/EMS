@@ -24,37 +24,39 @@ function ListPage() {
 
 
   // Refrences
-  const ByPositionREF = useRef();
-  const ByRoleREF = useRef();
-  const ByPermsREF = useRef();
-  const EMAILREF = useRef();
-
-  // assigning refrence to selectsElementsData to assign it to ref attribute of each SELECT element rendered
-  selectsElementsData[0].ref = ByPositionREF;
-  selectsElementsData[1].ref = ByRoleREF;
-  selectsElementsData[2].ref = ByPermsREF;
+  const inputsBoxsRef= useRef({});
+  const selectBoxsRef= useRef({});
 
   function handleClearFilterOption(){
-        
+    const EMAIL_REF = inputsBoxsRef.current["Email"];
+    const ByPositionREF = selectBoxsRef.current["emp_position"];
+    const ByRoleREF = selectBoxsRef.current["role_name"];
+    const ByPermsREF = selectBoxsRef.current["emp_perms"];
+
     setIsFiltered(false) // set to false to render cached employees with no filters
     setFilteredResults([]); //to remove all
     setCurrPage(1);
 
     // reset select filters back to no filter
-    EMAILREF.current.value = ""
-    ByPositionREF.current.value = "Position Filter";
-    ByRoleREF.current.value =  "Role Filter";
-    ByPermsREF.current.value =  "Perms Filter";
+    EMAIL_REF.value = ""
+    ByPositionREF.value = "Position Filter";
+    ByRoleREF.value =  "Role Filter";
+    ByPermsREF.value =  "Perms Filter";
 }
 
 function handleFilterOption(e , cause){
     if(e) e.preventDefault();
     // get filter inputs 
-    const emp_email = EMAILREF.current.value === "" ? null : EMAILREF.current.value;
-    const role_name = ByRoleREF.current.value === "Role Filter" ? null : ByRoleREF.current.value;
-    const emp_position = ByPositionREF.current.value === "Position Filter" ? null : ByPositionREF.current.value;
-    const emp_perms = ByPermsREF.current.value === "Perms Filter" ? null : ByPermsREF.current.value;
-
+    const EMAIL_REF = inputsBoxsRef.current["Email"];
+    const ByPositionREF = selectBoxsRef.current["emp_position"];
+    const ByRoleREF = selectBoxsRef.current["role_name"];
+    const ByPermsREF = selectBoxsRef.current["emp_perms"];
+    
+    const emp_email = EMAIL_REF.value === "" ? null : EMAIL_REF.value;
+    const role_name = ByRoleREF.value === "Role Filter" ? null : ByRoleREF.value;
+    const emp_position = ByPositionREF.value === "Position Filter" ? null : ByPositionREF.value;
+    const emp_perms = ByPermsREF.value === "Perms Filter" ? null : ByPermsREF.value;
+    console.log("handleFilterOption: emp_perms", emp_perms);
     // making sure this checking is applied when only pressing btn 
     if(!emp_email && !role_name && !emp_position && !emp_perms && cause === "button"){
         userNotification("error","No Filters Entered");
@@ -102,7 +104,16 @@ function handleFilterOption(e , cause){
   
   return (
     <main className={`${styles["list"]} wrapper`}>
-      <SearchOptions EMAILREF={EMAILREF} clearBtn = {handleClearFilterOption} handleFilterOption={handleFilterOption} setCurrPage={setCurrPage} currPage={currPage} sizeOfPage={sizeOfPage} setIsFiltered= {setIsFiltered} setFilteredResults={setFilteredResults} selectsElementsData={selectsElementsData}/>
+      <SearchOptions 
+          references ={{ inputsBoxsRef: inputsBoxsRef ,selectBoxsRef: selectBoxsRef}}
+          clearBtn = {handleClearFilterOption} 
+          handleFilterOption={handleFilterOption} 
+          setCurrPage={setCurrPage} 
+          currPage={currPage} 
+          sizeOfPage={sizeOfPage} 
+          setIsFiltered= {setIsFiltered} 
+          setFilteredResults={setFilteredResults} 
+          selectsElementsData={selectsElementsData}/>
       <Suspense fallback={<LoaderForComponents  styling={styles.loader_for_components_wrapper}/>}>
         <Table currPage={currPage} setCurrPage={setCurrPage} sizeOfPage={sizeOfPage} isFiltered={isFiltered} filteredResults={filteredResults}/>
       </Suspense>

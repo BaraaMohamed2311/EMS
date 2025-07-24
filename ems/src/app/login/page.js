@@ -16,10 +16,8 @@ export default function LoginPage() {
 
   const {  setIsLogin } = useIsLoginContext()
   // Refrences 
-  const EMAIL_REF = useRef();
-  const PASSWORD_REF = useRef();
-    inputs_info[0].ref = EMAIL_REF // assign it to property to loop
-    inputs_info[1].ref = PASSWORD_REF
+
+  let inputsBoxsRef = useRef({});
 
   
   /**************************************/
@@ -28,10 +26,13 @@ export default function LoginPage() {
     event.preventDefault();
     // sending request 
     // if empty do not send response
-    if(EMAIL_REF.current.value === "" || PASSWORD_REF.current.value === "") return userNotification("error","Fields Cannot Be Empty")
+    const EMAIL_REF = inputsBoxsRef.current["Email"];
+    const PASSWORD_REF = inputsBoxsRef.current["Password"];
+    console.log("inputsBoxsRef", inputsBoxsRef.current["Email"].value);
+    if(EMAIL_REF.value === "" || PASSWORD_REF.value === "") return userNotification("error","Fields Cannot Be Empty")
 
       // remove sotored data if user wants to log with new account so if pre stored is not null & different clear localStorage
-        if(user_data.emp_email && EMAIL_REF.current.value !== user_data.emp_email){
+        if(user_data.emp_email && EMAIL_REF.value !== user_data.emp_email){
            localStorage.clear(); // deletes all including blob url image and user data
         }
 
@@ -46,8 +47,8 @@ export default function LoginPage() {
                 'Content-Type': 'application/json'
               },
               body:JSON.stringify({
-                  emp_email:EMAIL_REF.current.value,
-                  password:PASSWORD_REF.current.value
+                  emp_email:EMAIL_REF.value,
+                  password:PASSWORD_REF.value
               })
             }
           )
@@ -94,9 +95,10 @@ export default function LoginPage() {
           <Form form_handler={login_handler}
                 formBtnState = {formBtnState} 
                 inputs_info = { inputs_info} 
-                formKind={"login"}
+                formKind={"login_form"}
                 setIsLoadingBtn={setIsLoadingBtn}
                 isLoadingBtn={isLoadingBtn}
+                references ={{inputsBoxsRef:inputsBoxsRef}}
                 />
         </div>
       </div>

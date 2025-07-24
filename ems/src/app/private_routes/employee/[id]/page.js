@@ -110,15 +110,15 @@ function UpdateState(reader_result){
             <ul className={styles["activity-list"]}>
               <li>
                 <strong>This Month Bonus:</strong> 
-                <span className={(user_data.emp_perms.has("Modify Salary") || user_data.emp_perms.has("Display Salary") )? "" : styles.hide_from_user}>
-                  {(user_data.emp_perms.has("Modify Salary") || user_data.emp_perms.has("Display Salary")) ? MoneyShortner(employee_displayed.emp_bonus) : "Not Accessible"  }
+                <span className={(user_data.emp_perms && (user_data.emp_perms.has("Modify Salary") || user_data.emp_perms.has("Display Salary")) )? "" : styles.hide_from_user}>
+                  {user_data.emp_perms && (user_data.emp_perms.has("Modify Salary") || user_data.emp_perms.has("Display Salary")) ? MoneyShortner(employee_displayed.emp_bonus) : "Not Accessible"  }
                   </span>
               </li>
               
               <li><strong>This Month Absence:</strong> <span className={user_data.role_name === "SuperAdmin" ? "" : styles.hide_from_user}>{user_data.role_name !== "SuperAdmin" ? "Not Accessible" : employee_displayed.emp_abscence}</span></li>
               <li>
                   <strong>Salary:</strong>
-                  <span className={(user_data.emp_perms.has("Modify Salary") || user_data.emp_perms.has("Display Salary")) ? "" : styles.hide_from_user}>
+                  <span className={user_data.emp_perms &&(user_data.emp_perms.has("Modify Salary") || user_data.emp_perms.has("Display Salary")) ? "" : styles.hide_from_user}>
                     {(user_data.emp_perms.has("Modify Salary") || user_data.emp_perms.has("Display Salary")) ?MoneyShortner(employee_displayed.emp_salary): "Not Accessible" }
                   </span>
               </li>

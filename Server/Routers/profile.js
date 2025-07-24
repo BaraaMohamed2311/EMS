@@ -105,7 +105,7 @@ const storage = new GridFsStorage({
   /* we create user as it could exist in mysql table but not created and assigned an image in mongodb that's apply to current and new employees */
 router.put("/update-prof-img" , jwtVerify, createUser, async (req , res , next)=> {await deleteFromBucket(gfs_bucket ,req , res , next)} , upload.single('emp_img'),async (req,res)=>{
     try{ 
-      console.log("update image requested")
+      
         if(gfs_bucket){
           
           const maxSizeInBytes = 51200; // 50Kbs

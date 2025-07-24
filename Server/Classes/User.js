@@ -30,6 +30,18 @@ class User {
 
     }
 
+
+
+    static async getUserRole(emp_id=null  , emp_email=null ){
+        //Finds Role of user using id or email & by default Role is Employee if not defined or user not exist
+        const query = `SELECT COALESCE( (SELECT NULLIF(r.role_name, '') FROM roles r WHERE ${emp_id ? `emp_id = ${emp_id}` :`emp_email = '${emp_email}'`} ),'Employee') AS role_name;
+`
+            // [0] as result is in array form but Role field has a  single value as string 
+            const result = await executeMySqlQuery(query);
+            return result[0].role_name ; 
+     
+    }
+
     static async getUserRole(emp_id=null  , emp_email=null ){
         //Finds Role of user using id or email & by default Role is Employee if not defined or user not exist
         const query = `SELECT COALESCE( (SELECT NULLIF(r.role_name, '') FROM roles r WHERE ${emp_id ? `emp_id = ${emp_id}` :`emp_email = '${emp_email}'`} ),'Employee') AS role_name;

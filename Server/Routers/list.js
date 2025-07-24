@@ -255,7 +255,7 @@ router.delete("/delete-employee", jwtVerify, async (req, res) => {
         else{
             return res.json({success:false , message:"Not Allowed To Delete Users"})
         }
-        console.log("isAllFulfilled",isAllFulfilled)
+        
         if (isAllFulfilled) {
             const isSent = await mailer(modifier_email, emp_email, "You Got Accepted", `
                 Dear ${emp_name},

@@ -30,7 +30,7 @@ class perms {
     }
 
     static async executeEditOthers(emp_id  , entries){
-
+        
         const fields = stringifyFields("joined",entries);
         const query = `UPDATE employees SET ${fields} WHERE emp_id = ?`
         await executeMySqlQuery(query ,[emp_id]);

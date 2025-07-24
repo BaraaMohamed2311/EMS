@@ -33,7 +33,7 @@ async function deleteFromBucket(bucket ,req , res , next){
                     })
                     
                 }
-                console.log("old image deleted from bucket")
+                consoleLog(`File ${fileName} Deleted From Bucket`,"info");
                 
             })
     }

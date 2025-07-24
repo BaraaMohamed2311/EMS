@@ -6,7 +6,7 @@ let inputs_info = [
         label:"Email",
         type:"email",
         name:"emp_email",
-        ref: null,
+        
 
     },
     {
@@ -14,7 +14,7 @@ let inputs_info = [
         label:"Name",
         type:"text",
         name:"emp_name",
-        ref: null,
+        
 
     },
     {
@@ -22,7 +22,7 @@ let inputs_info = [
         label:"Salary",
         type:"Number",
         name:"emp_salary",
-        ref: null,
+        
 
     },
     {
@@ -30,7 +30,7 @@ let inputs_info = [
         label:"Bonus",
         type:"Number",
         name:"emp_bonus",
-        ref: null,
+        
 
     },
     {
@@ -38,7 +38,7 @@ let inputs_info = [
         label:"Absence",
         type:"Number",
         name:"emp_abscence",
-        ref: null,
+        
 
     }
     
@@ -49,7 +49,7 @@ let select_position_options ={
     label:"Select Job Title",
     name:"emp_position",
     options:global_jobs,
-    ref: null
+
 }
 
 
@@ -58,7 +58,7 @@ let select_role_options ={
     label:"Select Role",
     name:"role_name",
     options:global_roles,
-    ref: null
+
 }
 
 /* 
@@ -75,7 +75,7 @@ let check_box = [
         value:"Modify Data",
         name:"Modify Data",
         type:"checkbox",
-        ref: null,
+        
 
     },
     {
@@ -84,7 +84,7 @@ let check_box = [
         value:"Modify Role",
         name:"Modify Role",
         type:"checkbox",
-        ref: null,
+        
 
     },
     {
@@ -92,7 +92,7 @@ let check_box = [
         value:"Modify Perms",
         name:"Modify Perms",
         type:"checkbox",
-        ref: null,
+        
 
     },
     {
@@ -101,7 +101,7 @@ let check_box = [
         value:"Modify Salary",
         name:"Modify Salary",
         type:"checkbox",
-        ref: null,
+        
 
     },
     {
@@ -110,7 +110,7 @@ let check_box = [
         value:"Accept Registered",
         name:"Accept Registered",
         type:"checkbox",
-        ref: null,
+        
 
     },
     {
@@ -119,7 +119,7 @@ let check_box = [
         value:"Display Salary",
         name:"Display Salary",
         type:"checkbox",
-        ref: null,
+        
 
     }
 

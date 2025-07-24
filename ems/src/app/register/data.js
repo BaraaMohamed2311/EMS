@@ -5,7 +5,7 @@ let inputs_info = [
         name:"emp_email",
         label:"Email",
         type:"email",
-        ref: null,
+
         isRequired:true,
 
     },
@@ -13,7 +13,7 @@ let inputs_info = [
         name:"emp_name",
         label:"Name",
         type:"text",
-        ref: null,
+
         isRequired:true,
 
     },
@@ -21,7 +21,7 @@ let inputs_info = [
         name:"emp_password",
         label:"Password",
         type:"password",
-        ref: null,
+
         isRequired:true,
 
     },
@@ -33,7 +33,7 @@ let select_position_options ={
     label:"Select Job Title",
     name:"emp_position",
     options:global_jobs,
-    ref: null
+    ref:null
 }
 
 let select_options = {select_position_options:select_position_options}

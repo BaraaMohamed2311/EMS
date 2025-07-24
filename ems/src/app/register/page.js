@@ -14,19 +14,22 @@ export default function RegisterPage() {
   inputs_info.forEach((input) => {
     input.ref = useRef();
   });
+  // ========================>MUST HAVE SAME ORDER IN references ARRAY AS inputs_info <=================
 
   const SelectPOSITION_REF = useRef();
+  let inputsBoxsRef = useRef({});
   select_options.select_position_options.ref = SelectPOSITION_REF;
   /**************************************/
   function register_handler(e){
     // preventing refresh
     e.preventDefault();
-
+    console.log("references register", references);
     // gathering values of body from refrences
     const requestBody ={};
     /******************************/
     inputs_info.forEach((input) => {
-      requestBody[input.name]= input.ref.current.value;
+      console.log("references.inputsBoxsRef[indx]", references.inputsBoxsRef.current[input.name].value);
+      requestBody[input.name]= references.inputsBoxsRef.current[input.name].value;
     });
     // adding position selection
     requestBody[select_options.select_position_options.name]= select_options.select_position_options.ref.current.value;
@@ -69,7 +72,13 @@ export default function RegisterPage() {
       <div className={styles["register"]}>
         <div className={styles["center"]}>
           <h1>EMS - Register</h1>
-          <Form form_handler={register_handler} select_options ={select_options} formBtnState = {formBtnState} inputs_info = { inputs_info} formKind={"register"}/>
+          <Form 
+          form_handler={register_handler} 
+          select_options ={select_options} 
+          formBtnState = {formBtnState} 
+          inputs_info = { inputs_info} 
+          references={{inputsBoxsRef: inputsBoxsRef}} 
+          formKind={"register_form"}/>
         </div>
       </div>
     </>
