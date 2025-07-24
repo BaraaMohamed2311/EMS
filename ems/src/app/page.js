@@ -49,7 +49,7 @@ export default function Home() {
                             Made to let you manage everything smoothly & easily, but also efficiently.
                         </p>
                         <p className="home-main-p">
-                            It's a management system where Super Admin can assign suitable roles for the others,
+                            It&apos;s a management system where Super Admin can assign suitable roles for the others,
                             <br /> to get the job done and track the progress of his employees.
                         </p>
                     </div>

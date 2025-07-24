@@ -14,7 +14,7 @@ function DashboardPage() {
     let chart = useRef(null);
     // Set up dynamic import inside useEffect
     useEffect(() => {
-        chart = new CanvasJS.Chart("chartContainer", {
+        chart.current = new CanvasJS.Chart("chartContainer", {
             animationEnabled: true,
             title:{
                 text: "Yearly Profit"
@@ -67,7 +67,7 @@ function DashboardPage() {
                 ]
             }]
         });
-        chart.render();
+        chart.current.render();
         
     }, []);
 

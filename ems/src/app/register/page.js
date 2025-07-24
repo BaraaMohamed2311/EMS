@@ -10,10 +10,7 @@ import { useRouter } from "next/navigation";
 export default function RegisterPage() {
   let [formBtnState, setFormBtnState] = useState("Register");
   let router = useRouter();
- /************ Refrences **************/
-  inputs_info.forEach((input) => {
-    input.ref = useRef();
-  });
+
   // ========================>MUST HAVE SAME ORDER IN references ARRAY AS inputs_info <=================
 
   const SelectPOSITION_REF = useRef();

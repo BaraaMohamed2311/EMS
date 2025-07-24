@@ -8,7 +8,7 @@ import { UserDataProvider } from "@/contexts/user_data";
 import Loading from "./loading";
 import { Suspense } from "react";
 import { ToastContainer } from "react-toastify";
-
+import Script from "next/script";
 import 'react-toastify/dist/ReactToastify.css';
 const inter = Inter({ subsets: ["latin"] });
 
@@ -22,8 +22,8 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <head>
-      <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
-      <script noModule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+      <Script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></Script>
+      <Script noModule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></Script>
       
       </head>
       <body className={inter.className}>
@@ -31,14 +31,14 @@ export default function RootLayout({ children }) {
           <UserDataProvider>
             <CachedEmployeesProvider>
               <Suspense fallback={<Loading />}>
-                <LayoutProvider children ={children}/>
+                <LayoutProvider>{children}</LayoutProvider>
               </Suspense>
             </CachedEmployeesProvider>
           </UserDataProvider>
         </IsLoginProvider>
         <ToastContainer position="bottom-right" autoClose={5000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover />
       
-        <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+        <Script src="https://canvasjs.com/assets/script/canvasjs.min.js"></Script>
 
       </body>
       
