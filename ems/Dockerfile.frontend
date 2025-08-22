@@ -1,6 +1,8 @@
+# Development Stage
+
 FROM node:20-alpine AS development
 
-WORKDIR /EMS/Client/
+WORKDIR /app
 
 COPY package.json .
 COPY package-lock.json .
@@ -16,22 +18,38 @@ EXPOSE 3000
 
 CMD [ "npm" , "run" , "dev" ]
 
-FROM node:20-alpine AS production
+# Build Stage
 
-WORKDIR /EMS/Client/
+FROM node:20-alpine AS builder
 
-COPY package.json .
-COPY package-lock.json .
+WORKDIR /app
 
-RUN npm i --production
+COPY package*.json ./
 
+RUN npm ci
 
 COPY . .
 
-
-EXPOSE 3000
-
 RUN npm run build
 
+# Production Stage
+FROM node:20-alpine AS production
 
-CMD [ "npm" , "run" , "start" ]
+
+# Set environment to production
+ENV NODE_ENV production
+
+# Set working directory
+WORKDIR /app
+
+# Copy only required files for running the app
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/.next ./.next
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/package.json ./package.json
+
+# Expose port (default for Next.js)
+EXPOSE 3000
+
+# Start the Next.js production server
+CMD ["npm", "start"]

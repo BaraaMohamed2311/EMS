@@ -21,19 +21,7 @@ services:
     networks:
       - app-net
 
-  mysql_db:
-    build: 
-      context: ./db/
-      dockerfile: Dockerfile.mysql
-    restart: on-failure
-    container_name: mysql_db_server
-    environment:
-      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
-      MYSQL_DATABASE: ${DB_NAME}
 
-    networks:
-      - app-net
-  
 
 # server does envirmonet checking at server.js code
   server:
@@ -57,10 +45,10 @@ services:
       - NODE_ENV=${NODE_ENV:-development}
     ports:
       - 5500:5500
+
     networks:
       - app-net
-    depends_on:
-      - mysql_db
+
     volumes:
       - ${CURRENT_PWD}/Server:/EMS/Server
       - /EMS/Server/node_modules
