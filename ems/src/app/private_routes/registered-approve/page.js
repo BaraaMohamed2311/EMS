@@ -41,15 +41,15 @@ function RegisteredApprovePage() {
     const sizeOfPage = 12;
     const { user_data} = useUserDataContext();
     const router = useRouter();
-    const EMAILREF = useRef()
-    
+    const inputsBoxsRef= useRef({});
+
     useEffect(()=>{
       Fetch_UnRegistered_Users(null , null , true);
     },[currPage])
 
     // we skip parameter 1 and 2 checkout searchOptions component
     function Fetch_UnRegistered_Users( p1 , p2  , isFirstRender = false){
-      fetch(`${process.env.APIKEY}/list/registered-approve?modifier_id=${user_data.emp_id}${isFirstRender ? "" : `&filtered_emp_email=${EMAILREF.current.value}`  }&currPage=${currPage}&size=${sizeOfPage}`,{
+      fetch(`${process.env.APIKEY}/list/registered-approve?modifier_id=${user_data.emp_id}${isFirstRender ? "" : `&filtered_emp_email=${inputsBoxsRef.current["Email"].value}`  }&currPage=${currPage}&size=${sizeOfPage}`,{
         mode:"cors",
         headers:{
               Authorization: `BEARER ${user_data.token}`,
@@ -158,12 +158,12 @@ function RegisteredApprovePage() {
     await setRegisteredUsers([]); //to remove all
     Fetch_UnRegistered_Users(null , null , true);
     // reset select filters back to no filter
-    EMAILREF.current.value = ""
+    inputsBoxsRef.current["Email"].value = ""
 }
   
   return (
     <main className={styles.registered_approve} >
-      <SearchOptions  EMAILREF={EMAILREF} clearBtn ={handleClearFilterOption} handleFilterOption={Fetch_UnRegistered_Users} currPage={currPage} />
+      <SearchOptions  references = {{ inputsBoxsRef: inputsBoxsRef }} clearBtn ={handleClearFilterOption} handleFilterOption={Fetch_UnRegistered_Users} currPage={currPage} />
       <Sheet
       variant="solid"
       invertedColors

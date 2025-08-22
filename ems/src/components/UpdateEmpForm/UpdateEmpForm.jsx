@@ -95,18 +95,30 @@ export default function UpdateEmpForm({isEditing , setIsEditing , employee_displ
       // ========= Modify Permissions =========
         
         let updated_emp_perms = [];
-        check_box.forEach((check_box_info) => {
-          
-          // Check if permission was changed or not and if not it gets pushed to updated_emp_perms
-          
-          const permAdded = checkBoxsRef.current[check_box_info.name].checked !== employee_displayed_perms.has(check_box_info.value) && checkBoxsRef.current[check_box_info.name].checked ;
-          const permStillExist = checkBoxsRef.current[check_box_info.name].checked && employee_displayed_perms.has(check_box_info.value);
+        let permModified = false; // Track if any permission was modified
 
-          if (checkBoxsRef.current[check_box_info.name] &&  permAdded || permStillExist) {
-            updated_emp_perms.push(check_box_info.value);
-            if (!actions.includes("Modify Perms")) actions.push("Modify Perms"); // Add "MP" if not already added
-          }
+        check_box.forEach((check_box_info) => {
+            const isCurrentlyChecked = checkBoxsRef.current[check_box_info.name].checked;
+            const wasPreviouslyChecked = employee_displayed_perms.has(check_box_info.value);
+            
+            // Check if permission state changed
+            if (isCurrentlyChecked !== wasPreviouslyChecked) {
+                permModified = true; // Mark that permissions were modified
+            }
+            
+            // Add to updated array if currently checked (scenarios 1 and 2)
+            if (isCurrentlyChecked) {
+                updated_emp_perms.push(check_box_info.value);
+            }
         });
+
+        // Scenario 3: If all permissions were unchecked but some existed before
+        // OR if any permission was changed in any way
+        if (permModified || (updated_emp_perms.length === 0 && employee_displayed_perms.size > 0)) {
+            if (!actions.includes("Modify Perms")) {
+                actions.push("Modify Perms");
+            }
+        }
         console.log("Updated Permissions:", updated_emp_perms);
         updatedEmployeeData.newperms = updated_emp_perms.join(", ");
 
