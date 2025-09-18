@@ -4,6 +4,8 @@ FROM node:20-alpine AS development
 
 WORKDIR /app
 
+ENV NODE_ENV=development
+
 COPY package.json .
 COPY package-lock.json .
 
@@ -37,7 +39,7 @@ FROM node:20-alpine AS production
 
 
 # Set environment to production
-ENV NODE_ENV production
+ENV NODE_ENV=production
 
 # Set working directory
 WORKDIR /app
@@ -53,3 +55,6 @@ EXPOSE 3000
 
 # Start the Next.js production server
 CMD ["npm", "start"]
+
+# So when NODE_END is local it uses production image
+FROM production AS local

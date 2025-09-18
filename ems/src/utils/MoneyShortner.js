@@ -1,4 +1,10 @@
 export default function MoneyShortner(price) {
+        if (price === undefined || price === null || price === "" || isNaN(price)) {
+            price = 0;
+        }else{
+            price = Number(price);
+        }
+        
         const billion = 1000000000;
         const million = billion / 1000;
         if (price > billion) {
@@ -11,4 +17,5 @@ export default function MoneyShortner(price) {
         else if (price <= 1000) {
             return price + "$";
         }
+        
     }

@@ -1,4 +1,4 @@
-import { global_jobs , global_roles } from "@/global_data";
+import { global_title,global_speciality , global_roles } from "@/global_data";
 
 let inputs_info = [ 
     {
@@ -53,11 +53,19 @@ let inputs_info = [
     
 ];
 
-let select_position_options ={
+let select_title_options ={
 
     label:"Select Job Title",
-    name:"emp_position",
-    options:global_jobs,
+    name:"emp_title",
+    options:global_title,
+
+}
+
+let select_speciality_options ={
+
+    label:"Select Job Speciality",
+    name:"emp_speciality",
+    options:global_speciality,
 
 }
 
@@ -134,6 +142,6 @@ let check_box = [
 
 ];
 
-let select_options = {select_position_options: select_position_options , select_role_options : select_role_options}
+let select_options = {select_title_options, select_speciality_options  , select_role_options }
 
 export  {inputs_info , select_options  , check_box}

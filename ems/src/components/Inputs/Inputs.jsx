@@ -5,6 +5,7 @@ function CheckBoxInput({inputs_info , references , employee_displayed }){
     // convert perms to set for easier checking
     const employee_permsSet = employee_displayed? new Set(employee_displayed.emp_perms.split(", ")) : "";
     
+    
     return (
         <div className={styles.check_inputs_wrapper}>
                 {
@@ -24,6 +25,7 @@ function CheckBoxInput({inputs_info , references , employee_displayed }){
 }
 
 function RegularInput({inputs_info  , formKind , employee_displayed , references} ){
+    console.log("inpuut_info", inputs_info,"references",references);
     return (
         <div className={formKind === "update_form"   ? styles.sided_inputs_wrapper : styles.colm_inputs_wrapper}>
             

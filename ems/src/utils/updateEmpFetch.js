@@ -17,7 +17,7 @@ export default function updateEmpFetch(url , token , body, actionsString , setCa
         return res.json()
     })
     .then(async (data)=>{
-
+        console.log("data after updating employee")
             if(data && data.success){
                 await  setCached_Employees(prev => {
                     // prevent direct modify
@@ -39,8 +39,8 @@ export default function updateEmpFetch(url , token , body, actionsString , setCa
                 router.replace("/private_routes/list");
                 
             }
-            console.log("data", data)
             
+            router.replace("/login");
         
     })
     .catch((err)=>{

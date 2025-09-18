@@ -69,7 +69,8 @@ router.get("/employees",jwtVerify,async (req,res)=>{
         COALESCE(NULLIF(r.role_name, ''), 'Employee') AS role_name, 
         e.emp_abscence, 
         e.emp_rate, 
-        e.emp_position, 
+        e.emp_title, 
+        e.emp_specialty, 
         e.emp_email,
         ${access_salary} 
         FROM employees e 
@@ -80,7 +81,7 @@ router.get("/employees",jwtVerify,async (req,res)=>{
         ${roles_CONDITION && Rest_CONDITION ? " AND " : ""}
         ${roles_CONDITION}
         GROUP BY 
-            e.emp_id, e.emp_name, r.role_name, e.emp_abscence, e.emp_rate, e.emp_position, e.emp_email, e.emp_salary, e.emp_bonus
+            e.emp_id, e.emp_name, r.role_name, e.emp_abscence, e.emp_rate, e.emp_title, e.emp_specialty , e.emp_email, e.emp_salary, e.emp_bonus
         ${perms_CONDITION}
         LIMIT ? OFFSET ?`;
         // last to parameters are linilt & offset
@@ -175,7 +176,8 @@ router.get("/employees",jwtVerify,async (req,res)=>{
                                                         COALESCE(NULLIF(r.role_name, ''), 'Employee') AS role_name, 
                                                         e.emp_abscence, 
                                                         e.emp_rate, 
-                                                        e.emp_position, 
+                                                        e.emp_title, 
+                                                        e.emp_specialty, 
                                                         e.emp_email ,
                                                         ${access_salary} 
                                                     FROM 
@@ -187,7 +189,7 @@ router.get("/employees",jwtVerify,async (req,res)=>{
                                                     WHERE 
                                                         e.emp_id = ?
                                                         GROUP BY
-                                                        e.emp_id, e.emp_name, r.role_name, e.emp_abscence, e.emp_rate, e.emp_position, e.emp_email, e.emp_salary, e.emp_bonus;`;
+                                                        e.emp_id, e.emp_name, r.role_name, e.emp_abscence, e.emp_rate, e.emp_title, e.emp_specialty , e.emp_email, e.emp_salary, e.emp_bonus;`;
                         
             
             

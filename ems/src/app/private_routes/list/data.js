@@ -1,12 +1,20 @@
-import { global_jobs, global_perms, global_roles } from "@/global_data"
+import {  global_perms, global_roles , global_title,global_speciality} from "@/global_data"
 
 let selectsElementsData = [
     {   
         ref: null,
-        key:"By Position",
-        label:"By Position",
-        name:"emp_position",
-        options:global_jobs,
+        key:"By Title",
+        label:"By Title",
+        name:"emp_title",
+        options:global_title,
+        
+    },
+    {   
+        ref: null,
+        key:"By Speciality",
+        label:"By Speciality",
+        name:"emp_specialty",
+        options:global_speciality,
         
     },
     {   

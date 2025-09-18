@@ -12,24 +12,27 @@ export default function RegisterPage() {
   let router = useRouter();
 
   // ========================>MUST HAVE SAME ORDER IN references ARRAY AS inputs_info <=================
+  console.log("select_options",select_options);
 
-  const SelectPOSITION_REF = useRef();
+  let selectBoxsRef = useRef({});
   let inputsBoxsRef = useRef({});
-  select_options.select_position_options.ref = SelectPOSITION_REF;
   /**************************************/
   function register_handler(e){
     // preventing refresh
     e.preventDefault();
-    console.log("references register", references);
+      setFormBtnState("Loading...");
     // gathering values of body from refrences
     const requestBody ={};
     /******************************/
     inputs_info.forEach((input) => {
-      console.log("references.inputsBoxsRef[indx]", references.inputsBoxsRef.current[input.name].value);
-      requestBody[input.name]= references.inputsBoxsRef.current[input.name].value;
+      requestBody[input.name]= inputsBoxsRef.current[input.name].value;
     });
-    // adding position selection
-    requestBody[select_options.select_position_options.name]= select_options.select_position_options.ref.current.value;
+    
+    // Adding Title & Speciality selection
+    console.log("selectBoxsRef.current",selectBoxsRef.current);
+      requestBody[select_options.select_title_options.name]= selectBoxsRef.current[select_options.select_title_options.name].value;
+      requestBody[select_options.select_speciality_options.name]= selectBoxsRef.current[select_options.select_speciality_options.name].value;
+    console.log("requestBody",requestBody);
 
 
     fetch(`${process.env.APIKEY}/user/register`, 
@@ -53,7 +56,7 @@ export default function RegisterPage() {
             }
           
           else{
-
+            setFormBtnState("Try Again");
             userNotification("error" , data.message)
           }
         })
@@ -74,7 +77,7 @@ export default function RegisterPage() {
           select_options ={select_options} 
           formBtnState = {formBtnState} 
           inputs_info = { inputs_info} 
-          references={{inputsBoxsRef: inputsBoxsRef}} 
+          references={{inputsBoxsRef , selectBoxsRef}} 
           formKind={"register_form"}/>
         </div>
       </div>

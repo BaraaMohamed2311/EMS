@@ -16,7 +16,7 @@ export default function UpdateEmpForm({isEditing , setIsEditing , employee_displ
     let selectBoxsRef = useRef({});
     const {setCached_Employees} = useCachedEmployeesContext()
     let {user_data} = useUserDataContext()
-    const router =useRouter();
+    const router = useRouter();
 
 /***************************************update_handler***************************************/
      function update_handler(e, url, token) {
@@ -45,15 +45,14 @@ export default function UpdateEmpForm({isEditing , setIsEditing , employee_displ
         let updatedEmployeeData = {};
         const employee_displayed_perms = new Set(employee_displayed.emp_perms.split(", "));
 
-    // ========= Modify Data =========
+    // ====================================================== Modify Data ======================================================
 
        // === 1. Check for changes in general input fields
 
         inputs_info.forEach((input_info) => {
-          
-          if ( inputsBoxsRef.current[input_info.name] && !inputsBoxsRef.current[input_info.name].value) {
+          //  Check If any inputBox is empty 
+          if ( (inputsBoxsRef.current[input_info.name] && !inputsBoxsRef.current[input_info.name].value) ){
             userNotification("error", "Input fields cannot be empty");
-
             return
           }
           
@@ -65,26 +64,39 @@ export default function UpdateEmpForm({isEditing , setIsEditing , employee_displ
           
         });
 
-        // === 2. Check for changes in position ===
+        // === 2. Check If any SelectBox is empty ===
 
-        if (selectBoxsRef.current[select_options.select_position_options.name] && !selectBoxsRef.current[select_options.select_position_options.name].value) {
+        if ( 
+            (selectBoxsRef.current[select_options.select_title_options.name] && !selectBoxsRef.current[select_options.select_title_options.name].value) ||
+            (selectBoxsRef.current[select_options.select_speciality_options.name] && !selectBoxsRef.current[select_options.select_speciality_options.name].value) ||
+            (selectBoxsRef.current[select_options.select_role_options.name] && !selectBoxsRef.current[select_options.select_role_options.name].value) 
+          ){
             userNotification("error", "Input fields cannot be empty");
-
+            return
           }
+
+        // === 3. Check for changes in Title ===
+
+
           // we check at first that input element is rendered using current of reference
-          if (selectBoxsRef.current[select_options.select_position_options.name] && (selectBoxsRef.current[select_options.select_position_options.name].value !== employee_displayed[select_options.select_position_options.name])) {
-            updatedEmployeeData[select_options.select_position_options.name] = selectBoxsRef.current[select_options.select_position_options.name].value;
+          if (selectBoxsRef.current[select_options.select_title_options.name] && (selectBoxsRef.current[select_options.select_title_options.name].value !== employee_displayed[select_options.select_title_options.name])) {
+            updatedEmployeeData[select_options.select_title_options.name] = selectBoxsRef.current[select_options.select_title_options.name].value;
+            if (!actions.includes("Modify Data")) actions.push("Modify Data"); 
+          }
+
+          // === 4. Check for changes in Speciality ===
+
+          // we check at first that input element is rendered using current of reference
+          if (selectBoxsRef.current[select_options.select_speciality_options.name] && (selectBoxsRef.current[select_options.select_speciality_options.name].value !== employee_displayed[select_options.select_speciality_options.name])) {
+            updatedEmployeeData[select_options.select_speciality_options.name] = selectBoxsRef.current[select_options.select_speciality_options.name].value;
             if (!actions.includes("Modify Data")) actions.push("Modify Data"); 
           }
 
 
-      // ========= Modify Role =========
+      //  ====================================================== Modify Role ======================================================
         
         
-          if (selectBoxsRef.current[select_options.select_role_options.name] && !selectBoxsRef.current[select_options.select_role_options.name].value) {
-            userNotification("error", "Input fields cannot be empty");
 
-          }
           // we check at first that input element is rendered using current of reference
           if (selectBoxsRef.current[select_options.select_role_options.name] && (selectBoxsRef.current[select_options.select_role_options.name].value !== employee_displayed[select_options.select_role_options.name])) {
             updatedEmployeeData[select_options.select_role_options.name] = selectBoxsRef.current[select_options.select_role_options.name].value;
@@ -92,7 +104,7 @@ export default function UpdateEmpForm({isEditing , setIsEditing , employee_displ
           }
         
       
-      // ========= Modify Permissions =========
+      // ====================================================== Modify Permissions ======================================================
         
         let updated_emp_perms = [];
         let permModified = false; // Track if any permission was modified
@@ -138,16 +150,13 @@ export default function UpdateEmpForm({isEditing , setIsEditing , employee_displ
             <div className={styles["center"]}>
                 {/* we have to check user modifier perms to check which inputs are displayed for editable fields  */}
                 <Form 
-                    references ={{ inputsBoxsRef: inputsBoxsRef, checkBoxsRef: checkBoxsRef ,selectBoxsRef: selectBoxsRef}} 
+                    references ={{ inputsBoxsRef, checkBoxsRef ,selectBoxsRef}} 
                     form_handler = {(e)=>update_handler(e ,"list/update-others" , user_data.token )}
                     // add employee_displayed to form to show prev values of inputs
                     employee_displayed = {employee_displayed} 
                     // removes Role selection if no permission
                     select_options={  
-                    user_data.emp_perms && user_data.emp_perms.has("Modify Role") ?
-                    select_options : {select_position_options :select_options.select_position_options
-
-                    }} 
+                    user_data.emp_perms && user_data.emp_perms.has("Modify Role") ? select_options : {select_title_options :select_options.select_title_options , select_speciality_options: select_options.select_speciality_options}} 
                     /*removes check box of perms for user who\s not allowed to edit others perms */
                     check_box={ user_data.emp_perms && user_data.emp_perms.has("Modify Perms") ?
                                 check_box : null } 

@@ -113,7 +113,8 @@ export default function BasicTable({currPage , setCurrPage , sizeOfPage , isFilt
             <th className={styles.table_col_1}>Name</th>
             <th className={styles.table_col_2}>Email</th>
             {!isSmallScreen && <>
-              <th className={styles.table_col_2}>Position</th>
+              <th className={styles.table_col_2}>Title</th>
+              <th className={styles.table_col_2}>Speciality</th>
               <th className={styles.table_col_1}>Salary</th>
               <th className={styles.table_col_1}>Bonus</th>
               <th className={styles.table_col_1}>Absence</th>
@@ -131,8 +132,9 @@ export default function BasicTable({currPage , setCurrPage , sizeOfPage , isFilt
                 <th className={styles.table_col_1}>{employee.emp_id}</th>
                 <th className={styles.table_col_1}>{employee.emp_name}</th>
                 <th className={styles.table_col_2}>{employee.emp_email}</th>
+                <th className={styles.table_col_2}>{employee.emp_title}</th>
                 {!isSmallScreen && <>
-                <th className={styles.table_col_2}>{employee.emp_position}</th>
+                <th className={styles.table_col_2}>{employee.emp_specialty}</th>
                 <th className={styles.table_col_1}>{employee.emp_salary}</th>
                 <th className={styles.table_col_1}>{employee.emp_bonus}</th>
                 <th className={styles.table_col_1}>{employee.emp_abscence}</th>
@@ -150,11 +152,14 @@ export default function BasicTable({currPage , setCurrPage , sizeOfPage , isFilt
                         <th className={styles.table_col_1}>{employee.emp_id}</th>
                         <th className={styles.table_col_1}>{employee.emp_name}</th>
                         <th className={styles.table_col_2}>{employee.emp_email}</th>
-                        <th className={styles.table_col_2}>{employee.emp_position}</th>
-                        <th className={styles.table_col_1}>{employee.emp_salary}</th>
-                        <th className={styles.table_col_1}>{employee.emp_bonus}</th>
-                        <th className={styles.table_col_1}>{employee.emp_abscence}</th>
-                        <th className={styles.table_col_1}>{employee.emp_rate}</th>
+                        <th className={styles.table_col_2}>{employee.emp_title}</th>
+                        {!isSmallScreen && <>
+                          <th className={styles.table_col_2}>{employee.emp_specialty}</th>
+                          <th className={styles.table_col_1}>{employee.emp_salary}</th>
+                          <th className={styles.table_col_1}>{employee.emp_bonus}</th>
+                          <th className={styles.table_col_1}>{employee.emp_abscence}</th>
+                          <th className={styles.table_col_1}>{employee.emp_rate}</th>
+                          </>}
                         <th className={styles.table_col_1}><button onClick={()=>handleVisitBtn(employee)} className={styles["grey-button"]}>Visit</button></th>
                       </tr>
                     )

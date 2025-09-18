@@ -99,7 +99,7 @@ function UpdateState(reader_result){
             
             <div className={styles["employee-info"]}>
               <h1 className={styles["employee-name"]}>{employee_displayed.emp_name}</h1>
-              <p className={styles["employee-position"]}>{employee_displayed.emp_position}</p>
+              <p className={styles["employee-position"]}>{`${employee_displayed.emp_title} | ${employee_displayed.emp_specialty}`}</p>
               <p><strong>Email:</strong> {employee_displayed.emp_email}</p>
               <p><strong>Location:</strong> {employee_displayed.emp_address || "Not Specified"}</p>
               <p><strong>Member Since:</strong> {employee_displayed.emp_joined || "Not Specified"}</p>

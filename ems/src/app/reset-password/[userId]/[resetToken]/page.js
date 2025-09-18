@@ -11,7 +11,7 @@ export default function ForgetPasswordPage() {
     const router = useRouter();
     const PASS1_REF = useRef();
     const PASS2_REF = useRef();
-    
+    const inputsBoxsRef = useRef({})
     const {userId , resetToken} = useParams();
   
   /**************************************/
@@ -20,7 +20,7 @@ export default function ForgetPasswordPage() {
     event.preventDefault();
     // sending request 
     // if empty do not send response
-    if(PASS1_REF.current.value  === PASS2_REF.current.value){
+    if(inputsBoxsRef.current["emp_password1"].value  === inputsBoxsRef.current["emp_password2"].value){
     fetch(`${process.env.APIKEY}/user/reset-password/${userId}/${resetToken}`, 
           {
           method:"PUT",
@@ -29,7 +29,7 @@ export default function ForgetPasswordPage() {
             'Content-Type': 'application/json'
           },
           body:JSON.stringify({
-              emp_password:PASS1_REF.current.value,
+              emp_password:inputsBoxsRef.current["emp_password1"].value,
           })
         }
       )
@@ -67,17 +67,17 @@ export default function ForgetPasswordPage() {
                         id:"reset_password1",
                         label:"New Password",
                         type:"password",
-                        ref: PASS1_REF,
+                        name:"emp_password1",
                         isRequired:true
 
                     },{
                         id:"reset_password2",
                         label:"Repeat Password",
                         type:"password",
-                        ref: PASS2_REF,
+                        name:"emp_password2",
                         isRequired:true
 
-                    }]} formKind={"forget_pass_form"}/>
+                    }]} references={{inputsBoxsRef}} formKind={"forget_pass_form"}/>
         </div>
       </div>
     </>

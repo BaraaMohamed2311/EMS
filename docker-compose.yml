@@ -31,27 +31,14 @@ services:
       args:
         - NODE_ENV=${NODE_ENV:-development}
     container_name: ems_server
-    environment:
-      - DB_PASSWORD=${DB_PASSWORD}
-      - SECRET_KEY=${SECRET_KEY}
-      - EMS_MongoDB=${EMS_MongoDB}
-      - RESETPASSPATH=${RESETPASSPATH}
-      - MAILERPASS=${MAILERPASS}
-      - DB_NAME=${DB_NAME}
-      - PORT=${PORT}
-      - DB_USER=${DB_USER}
-      - DB_PORT=${DB_PORT} 
-      - DB_HOST=${DB_HOST} 
-      - NODE_ENV=${NODE_ENV:-development}
+
     ports:
       - 5500:5500
 
     networks:
       - app-net
 
-    volumes:
-      - ${CURRENT_PWD}/Server:/EMS/Server
-      - /EMS/Server/node_modules
+
 
 
 # client has to be provided with enviroment or by default it will build development env
@@ -63,26 +50,20 @@ services:
       args:
         - NODE_ENV=${NODE_ENV}
     container_name: ems_client
-    
-    environment:
-      - APIURL=${APIURL} # so requests are handled by nginx /api configurations
-      - NODE_ENV=${NODE_ENV:-development}
+
     ports:
       - 3000:3000
 
     networks:
       - app-net 
-    volumes:
-      - ${CURRENT_PWD}/ems:/EMS/Client
-      - /EMS/ems/node_modules
+
+
 
 
 networks:
   app-net :
     driver : bridge
 
-volumes:
-  mysql_db_vol:
 
 
 

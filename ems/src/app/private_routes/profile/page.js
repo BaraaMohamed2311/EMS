@@ -70,7 +70,7 @@ function ProfilePage() {
 
           <div className={styles["profile-info"]}>
               <h1 className={styles["profile-name"]}>{user_data.emp_name}</h1>
-              <p className={styles["profile-position"]}>{user_data.emp_position}</p>
+              <p className={styles["profile-position"]}>{`${user_data.emp_title} | ${user_data.emp_specialty}` || "No Assigned Position"}</p>
               <p><strong>Email:</strong> {user_data.emp_email}</p>
               <p><strong>Location:</strong> {user_data.emp_address || "Not Specified"}</p>
               <p><strong>Member Since:</strong> {user_data.emp_joined || "Not Specified"}</p>

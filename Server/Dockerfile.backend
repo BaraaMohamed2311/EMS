@@ -2,6 +2,14 @@ FROM node:20-alpine
 
 WORKDIR /app
 
+ARG NODE_ENV=development
+
+RUN echo "Building in $NODE_ENV mode"
+
+# override enviroment variable if provided during build time because server needs it as env variable when container is running
+ENV NODE_ENV=${NODE_ENV:-development}
+
+
 COPY package.json .
 COPY package-lock.json .
 

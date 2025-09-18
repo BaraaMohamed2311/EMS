@@ -206,7 +206,7 @@ function RegisteredApprovePage() {
               <tr key={employee.emp_id} className={styles.table_row + ' ' + styles.tr}>
                 <th className={styles.table_col_1 + ' ' + styles.th}>{employee.emp_name}</th>
                 <th className={styles.table_col_2 + ' ' + styles.th}>{employee.emp_email}</th>
-                {!isSmallScreen && <th className={styles.table_col_2 + ' ' + styles.th}>{employee.emp_position}</th>}
+                {!isSmallScreen && <th className={styles.table_col_2 + ' ' + styles.th}>{`${employee.emp_title} | ${employee.emp_specialty}`}</th>}
 
                 <th className={styles.table_col_1 + ' ' + styles.th}>
                   <button onClick={(e)=>handleAccept(e,user_data.emp_id ,user_data.emp_email ,  user_data.emp_name , employee.emp_name , employee.emp_email )} className={`green-button`}>
