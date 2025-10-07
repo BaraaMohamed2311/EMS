@@ -4,7 +4,7 @@ const nextConfig = {
     env: {
         // APIKEY: process.env.APIURL,
         // for local development 
-        APIKEY: process.env.APIURL || "http://localhost:5500/api",
+        APIKEY: process.env.NODE_ENV === "production" ? "/api" : "http://localhost:5500",
       },
       
       reactStrictMode: false,

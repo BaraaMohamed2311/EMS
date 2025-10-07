@@ -100,6 +100,7 @@ class perms {
 
     static async executeRemoveOtherPerm(queries){
         // To create Transaction & Rollback on errors
+
             return await sqlTransaction(queries);
         
     }
