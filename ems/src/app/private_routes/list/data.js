@@ -1,6 +1,10 @@
-import {  global_perms, global_roles , global_title,global_speciality} from "@/global_data"
+import {  global_perms, global_roles , global_title,global_specialty} from "@/global_data"
+let inputs_info= [
+    {  key:"user_email",label:"Email", name: "user_email", type: "email" },
+    { key:"user_name",label:"Name", name: "user_name", type: "text" },
+]
 
-let selectsElementsData = [
+let select_def = [
     {   
         ref: null,
         key:"By Title",
@@ -11,10 +15,10 @@ let selectsElementsData = [
     },
     {   
         ref: null,
-        key:"By Speciality",
-        label:"By Speciality",
+        key:"By specialty",
+        label:"By specialty",
         name:"emp_specialty",
-        options:global_speciality,
+        options:global_specialty,
         
     },
     {   
@@ -36,4 +40,4 @@ let selectsElementsData = [
 ]
  
 
-export  default selectsElementsData
+export  {select_def , inputs_info}

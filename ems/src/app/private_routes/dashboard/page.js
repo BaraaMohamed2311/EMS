@@ -74,6 +74,7 @@ function DashboardPage() {
     
 
     useEffect(() => {
+        
         fetch(`${process.env.APIKEY}/dashboard/main`, {
             mode: "cors",
             headers: {

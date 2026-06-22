@@ -21,6 +21,7 @@ export default function ForgetPasswordPage() {
     // sending request 
     // if empty do not send response
     if(inputsBoxsRef.current["emp_password1"].value  === inputsBoxsRef.current["emp_password2"].value){
+      
     fetch(`${process.env.APIKEY}/user/reset-password/${userId}/${resetToken}`, 
           {
           method:"PUT",
@@ -29,7 +30,7 @@ export default function ForgetPasswordPage() {
             'Content-Type': 'application/json'
           },
           body:JSON.stringify({
-              emp_password:inputsBoxsRef.current["emp_password1"].value,
+              user_password:inputsBoxsRef.current["emp_password1"].value,
           })
         }
       )
@@ -48,7 +49,7 @@ export default function ForgetPasswordPage() {
           }
         })
         .catch(err=>{
-          console.log("Error Login",err);
+
           setFormBtnState("Try Again");
           userNotification("error" , data.message)
         })

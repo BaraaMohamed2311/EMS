@@ -1,62 +1,60 @@
+function stringifyFields(isFor, entries, alias = "") {
+  const prefix = alias ? `${alias}.` : ""; // Apply alias only if provided
 
+  switch (isFor) {
 
-function stringifyFields(isFor , entries){
-    // seperate values from fields
-    switch(isFor){
-        case "seperate" :
-            // to return text like <field1> , <field2>  , <field3> and  <value1> , <value2> , <value3>
-            let columns_field = "";
-            let values_field = "";
-                    entries.forEach(([key , value ],indx)=>{
-                        columns_field += key;
-                        
-                        if(typeof value == 'string'){
-                            // make sure to add the hashed password to db and not the original
-                            values_field += `"${value}"`
-                        }
-                        else{
-                            values_field += `${value}`
-                        }
-                        if(indx !== entries.length - 1){
-                            columns_field += ",";
-                            values_field += ","
-                        }
-                            
-                    })
+    // ===========================================
+    // 1. "seperate" —  (no alias usage)
+    // ===========================================
+    case "seperate":
+      let columns_field = "";
+      let values_field = "";
 
-                return { columns_field , values_field};
+      entries.forEach(([key, value], indx) => {
+        columns_field += key;
 
-            case "joined" :
-                // as field1 = value1 , field2 = value2 .....
-                let joined = "";
-                // adding columns to be updated as col1 = newVal , col2 = newVal ....
-                entries.forEach(([key,value] , indx) => {
-                    if((value || value === 0) && typeof value == 'string'){
-                        joined += `${key} = "${value}"`
-                    }else{
-                        joined += `${key} = ${value}`
-                    }
-                    if(indx !== entries.length - 1) joined += ',';
-               
-                })
+        if (typeof value === "string") {
+          values_field += `"${value.replace(/"/g, '\\"')}"`;
+        } else {
+          values_field += `${value}`;
+        }
 
-                return joined
+        if (indx !== entries.length - 1) {
+          columns_field += ",";
+          values_field += ",";
+        }
+      });
 
+      return { columns_field, values_field };
 
-            case "fields" :
-                // as field1 , field2 , .....
-                let fields = ""
-                entries.forEach(( field , indx) => {
-                    fields += field;
-                    if(indx !== entries.length - 1) fields += ','
-                });
+    // ===========================================
+    // 2. "joined" — now alias-aware
+    //    Produces:   alias.col = value , alias.col2 = value2
+    // ===========================================
+    case "joined":
+      return entries
+        .map(([key, value]) => {
+          const field = `${prefix}${key}`;
 
-                return fields
-    }
+          if (typeof value === "string") {
+            return `${field} = "${value.replace(/"/g, '\\"')}"`;
+          }
+          return `${field} = ${value}`;
+        })
+        .join(", ");
 
+    // ===========================================
+    // 3. "fields" — now alias-aware
+    //    Produces:   alias.col1 , alias.col2 , alias.col3
+    // ===========================================
+    case "fields":
+      return entries
+        .map(([field]) => `${prefix}${field}`)
+        .join(", ");
 
+    default:
+      return "";
+  }
 }
-
-
 
 module.exports = stringifyFields;

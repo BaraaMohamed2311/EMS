@@ -1,8 +1,8 @@
 import userNotification from "./userNotification";
 
-export default function updateImg(image_file ,emp_email , setBlobURL , token){
+export default function updateImg(image_file ,user_id , setBlobURL , token){
   const mimetypes = new Set(["image/jpeg" ,"image/JPEG" , "image/png" , "image/jpg" , "image/JPG" , "image/PNG"]);
-  const maxSizeInBytes = 51200;
+  const maxSizeInBytes = 20 * 1024 * 1024; // 20MB
 
 
   // first validate type then size
@@ -14,9 +14,9 @@ export default function updateImg(image_file ,emp_email , setBlobURL , token){
   
   // Valid image updating
     let formData = new FormData();
-    formData.append("emp_img",image_file);
+    formData.append("user_pic",image_file);
     
-    fetch(`${process.env.APIKEY}/profile/update-prof-img?emp_email=${emp_email}`,{
+    fetch(`${process.env.APIKEY}/files/profile/?user_id=${user_id}`,{
         method:"PUT",
         mode:"cors",
         headers:{
@@ -55,7 +55,7 @@ export default function updateImg(image_file ,emp_email , setBlobURL , token){
 
     })
     .catch((err)=>{
-        console.log("Error Fetching Image", err)
+
         userNotification("error","Error Fetching Image")
     })
 

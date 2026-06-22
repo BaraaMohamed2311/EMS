@@ -1,21 +1,24 @@
 "use client"
 import { useUserDataContext } from "@/contexts/user_data"
-import { useCachedEmployeesContext } from "@/contexts/cached_employees";
+import { useEmployeesCache } from "@/hooks/useEmployeesCache"
+import {clearStore} from "../utils/indexDB/deleteCacheMethods"
 import userNotification from "../utils/userNotification";
 import { useIsLoginContext } from "@/contexts/isLogin";
 import { useRouter } from "next/navigation";
+import { global_store_names } from "@/global_data"
 export default function  useLogOut(){
     let { setUser_Data } = useUserDataContext();
-    let {  setCached_Employees } = useCachedEmployeesContext()
+    let { setCached_Employees } = useEmployeesCache();
     let {setIsLogin} = useIsLoginContext()
     const router = useRouter()
+    // logout function
     return function (){
 
         router.replace("/")
         setUser_Data({
             emp_id: null,
-            emp_name: null,
-            emp_email: null,
+            user_name: null,
+            user_email: null,
             emp_title: null,
             emp_specialty: null,
             emp_salary: null,
@@ -27,8 +30,16 @@ export default function  useLogOut(){
 
         // hide logout button
         setIsLogin(false)
-        // clear user cached employee context 
+        // clear user cached data in states
         setCached_Employees([]);
+
+
+        // clear all data in indexedDB
+
+        for (const storeName of global_store_names){
+            clearStore(storeName);
+        }
+
         // clear all data in localStorage
         localStorage.clear();
         // send notification

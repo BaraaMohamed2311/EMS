@@ -1,23 +1,27 @@
-function JoinFiltering(entries , db){
-    // as field1 = value1 , field2 = value2 .....
-    let anded = "";
-    // adding columns to be updated as col1 = newVal , col2 = newVal ....
-    entries.forEach(([key,value] , indx) => {
-        // if there is a value we execute
-        if(value && value !== 'null'){
-            if(typeof value == 'string'){
-                anded += `${db}.${key} = "${value}"`
-            }else{
-                anded += `${key} = ${value}`
-            }
-            if(indx !== entries.length - 1) anded += ' AND ';
-        }
-        
 
-    })
 
-    return  anded ;
+function JoinFiltering(entries, db) {
+  // Filter out null/undefined/"null" values first
+  const filtered = entries.filter(
+    ([, value]) => value !== undefined && value !== null && value !== "null" && value !== ""
+  );
+
+  // Map into SQL conditions
+  const conditions = filtered.map(([key, value]) => {
+    const prefix = db ? `${db}.` : ""; // only prefix if db is provided
+
+    if (typeof value === "string") {
+      return `${prefix}${key} = "${value.replace(/"/g, '\\"')}"`; // escape quotes
+    }
+    return `${prefix}${key} = ${value}`;
+  });
+
+  // Join with AND
+  return conditions.join(" AND ");
 }
+
+
+
 
 
 module.exports = JoinFiltering;

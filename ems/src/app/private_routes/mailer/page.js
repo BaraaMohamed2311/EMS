@@ -12,16 +12,16 @@ export default function MailerPage() {
     const SendTo_REF = useRef();
     const Subject_REF = useRef();
     const TEXT_REF = useRef();
-    console.log("styles styles",styles)
+
     function handleSubmitEmail(e){
         e.preventDefault();
 
         setIsLoadingBtn(true);
-
+        
         fetch(`${process.env.APIKEY}/mail/mail-employee`,{
             method:"POST",
             body:JSON.stringify({
-                SendFrom: user_data.emp_email,
+                SendFrom: user_data.user_email,
                 SendTo: SendTo_REF.current.value,
                 subject:Subject_REF.current.value ,
                 text:TEXT_REF.current.value

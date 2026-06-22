@@ -1,41 +1,34 @@
 
-const connectionPool = require("./connect_ems_db");
+const getConnectionPool = require("./connect_ems_db").getConnectionPool;
 const consoleLog = require("../Utils/consoleLog");
+async function executeMySqlQuery(query, paramsArray = []) {
+    const connectionPool = getConnectionPool();
 
-async function executeMySqlQuery(query, paramsArray=[]) {
     try {
-        // we use promise to get returned results from resolve
-        const executeQuery = (query) => {
-            return new Promise((resolve, reject) => {
+        const result = await new Promise((resolve, reject) => {
 
-                if(paramsArray.length > 0 ){
-                    // can't use paramsArray with execute() so we use query()
-                    connectionPool.query(`${query};`, paramsArray , (error, results) => {
-                        if (error) {
-                            console.error(`executeMySqlQuery error ` ,error );
-                            return reject(false); // Reject on error
-                        }
-                        resolve(results); 
-                    });
+            const callback = (error, results) => {
+                if (error) {
+                    console.error("executeMySqlQuery error:", error);
+                    return reject(error); // ❗ return real error
                 }
-                else{
-                    connectionPool.execute(`${query};`, (error, results) => {
-                        if (error) {
-                            console.error(`executeMySqlQuery error ` ,error );
-                            return reject(false); // Reject on error
-                        }
-                        resolve(results); 
-                    });
-                }
-                
-            });
-        };
+                resolve(results);
+            };
 
-        // Execute the first query
-        const result = await executeQuery(query); // Wait for the first query to complete
-        return result;
+            if (paramsArray.length > 0) {
+                connectionPool.query(query, paramsArray, callback);
+            } else {
+                connectionPool.execute(query, callback);
+            }
+        });
+
+        return result ?? []; // ❗ never undefined
+
     } catch (error) {
-        consoleLog(`executeMySqlQuery catch error ${error}` , "error");
+        consoleLog(`executeMySqlQuery failed: ${error.message}`, "error");
+
+        // ❗ IMPORTANT: rethrow or return safe value
+        return []; // safest for SELECT queries
     }
 }
 

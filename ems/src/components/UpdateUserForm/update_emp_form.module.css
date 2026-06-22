@@ -1,0 +1,10 @@
+
+  .center{
+      width: 50rem;
+      max-height: 40rem;
+      overflow-y: scroll;
+      background: white;
+      border-radius: 10px;
+      box-shadow: var(--shadow-hard-values);
+      padding: 1rem 2rem;
+  }

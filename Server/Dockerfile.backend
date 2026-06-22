@@ -1,28 +1,27 @@
-FROM node:20-alpine 
+FROM node:20-alpine
 
 WORKDIR /app
 
 ARG NODE_ENV=development
+ENV NODE_ENV=$NODE_ENV
 
-RUN echo "Building in $NODE_ENV mode"
+# System setup
+RUN echo "Building in $NODE_ENV mode" \
+ && apk add --no-cache python3 make g++ \
+ && addgroup -S appgroup \
+ && adduser -S appuser -G appgroup
 
-# override enviroment variable if provided during build time because server needs it as env variable when container is running
-ENV NODE_ENV=${NODE_ENV:-development}
+# Install dependencies (best caching point)
+COPY package.json package-lock.json ./
+RUN npm ci
 
-
-COPY package.json .
-COPY package-lock.json .
-
-
-RUN npm i
-
-
+# Copy application code
 COPY . .
 
+# Debugging: List files and permissions
+RUN echo "Listing files in /app:" && ls -la /app
+# Drop privileges
+USER appuser
 
 EXPOSE 5500
-
-
-CMD [ "npm" , "run" , "start" ]
-
-
+CMD ["npm","run","start"]

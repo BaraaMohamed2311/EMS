@@ -1,9 +1,9 @@
  const global_perms = [
-    { value: "Modify Data", text: "Modify Data" },
+    { value: "Modify Employee Data", text: "Modify Employee Data" },
     { value: "Modify Salary", text: "Modify Salary" },
     { value: "Display Salary", text: "Display Salary" },
-    { value: "Modify Perms", text: "Modify Perms" },
-    { value: "Modify Role", text: "Modify Role" },
+    { value: "Modify Employee Perms", text: "Modify Employee Perms" },
+    { value: "Modify Employee Role", text: "Modify Employee Role" },
     { value: "Delete User", text: "Delete User" },
     { value: "Accept Registered", text: "Accept Registered" }
     ]
@@ -28,7 +28,7 @@ const global_title = [
     { value: "Surgeon", text: "Surgeon" }
 ];
 
-const global_speciality = [
+const global_specialty = [
     // IT specialities
     { value: "Front-End", text: "Front-End"  },
     { value: "Back-End", text: "Back-End"  },
@@ -131,7 +131,17 @@ const global_mapped_specialities = {
     const global_roles = [
             {value:"SuperAdmin", text:"SuperAdmin"},
             {value:"Admin", text:"Admin"},
-            {value:"Employee", text:"Employee"},
+            {value:"NormalUser", text:"NormalUser"},
     ]
 
-        export  {global_perms  ,global_roles,global_title, global_speciality , global_mapped_specialities};
+        // --------------------------------------------------
+//        IndexedDB 
+// --------------------------------------------------
+const global_store_names = [
+  "employees",
+  "user_images"
+];
+
+
+
+        export  {global_perms  ,global_roles,global_title, global_specialty , global_mapped_specialities,global_store_names};

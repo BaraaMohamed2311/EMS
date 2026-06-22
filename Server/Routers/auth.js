@@ -9,35 +9,89 @@ const fixedFields = require("../Utils/fixedFields.js");
 const mailer = require("../Utils/mailer.js");
 const ResetPasswordTokensModel = require("../Models/ResetPassword.js");
 const crypto = require("crypto");
-const consoleLog = require("../Utils/consoleLog.js")
-    // Login
+const consoleLog = require("../Utils/consoleLog.js");
+const CompanyUsersMethods = require("../Classes/CompanyUsers/CompanyUsersMethods.js");
+const generalUserMethods = require("../Utils/methods/generalUserMethods.js");
+// =================================
+//  Login User (Employees or Patients)
+// =================================
     router.post("/login", async function(req, res) {
         try {
             // Extract request data
-            const { emp_email, password } = req.body;
+            const { user_email, password } = req.body;
 
-            if(!emp_email || !password) 
+            // --1. Bad Request if missing fields
+            if(!user_email || !password) 
                 return res.status(400).json({success:false,message:"Bad Request"});
             
+            const userExists = await User.checkIfUserExistsByEmail(user_email);
+            const userType = await User.getUserTypeByEmail(user_email);
 
-            let user = await executeMySqlQuery(`SELECT * FROM employees WHERE emp_email = ?`,[emp_email])
+            const userIsEmployee = userType === 'employee';
 
-            if ( user.length < 1) {
+            if(!userExists || !userIsEmployee){
                 return res.status(404).json({
-                    success: false,
-                    message: "User Not Found"
+                    success:false,
+                     message : "User Not Found"
                 });
             }
             
+            // If employee, make sure he is hospital employee
+            const isCompanyUser = userIsEmployee?  CompanyUsersMethods.isCompanyUser(await User.getUserTitleByEmail(user_email)) : false;
+ 
+                // If he's employee but not as hospital staff then he has to register as patient first
+                    if(!isCompanyUser && userIsEmployee){
+                        return res.status(404).json({
+                            success:false,
+                            message : "Your title doesn't have access to this system"
+                        });
+                    }
             
-            // get user role and send to response
-            user[0].role_name =  await User.getUserRole(user[0].emp_id);
+            
 
-            user[0].emp_perms =  await User.getUserperms(user[0].emp_id);
+            // --3. Get user data from the correct table and match password
+            let user = null;
+            let match = null
+            // sets value to Patient as default value for 
+            const result =await User.getUserIDAndTable(user_email);
+            const user_id = result.user_id;
+            const user_title =await User.getUserTitleByEmail(user_email);
+            const isCompanyEmployee = CompanyUsersMethods.isCompanyUser(user_title)
+            // get user's general data first , isLogin=true to get password as well
+            user = await generalUserMethods.getUserData(user_id , true);
 
+            // get user's employee data if he's employee
+            const empData = await generalUserMethods.getUserEmpData(user_id);
+            user = empData ? {...user , ...empData} : user;
+            // get user's specific data if he's a specific table data
+            const specificData = isCompanyEmployee ? await CompanyUsersMethods.MapUserToGETSpecificDataFunction(user_id, user_title) : null;
+
+            user = isCompanyEmployee ? {...user , ...specificData} : user;
+
+            // User must register as patient if he is not an employee and not registered as patient
+            if(!userIsEmployee && !isCompanyEmployee){
+                return res.status(404).json({
+                    success: false,
+                    message: 'Please, Register As Employee First'
+                });
+            }
+
+            // Gets Perms Set and convert it to Array
+            // Gets Role
+            if(userIsEmployee && isCompanyEmployee && user){
+                user.emp_perms =  Array.from(await User.getSetUserperms(user_id));
+                user.role_name = await User.getUserRole(user_id)
+            }
+
+            if (!user || !user.user_password) {
+                return res.status(401).json({
+                    success: false,
+                    message: 'Invalid credentials'
+                });
+            }
+            match = await bcrypt.compare(password, user.user_password);
 
             // Compare request's password with hashed password
-            const match = await bcrypt.compare(password, user[0].emp_password);
             if (!match) {
                 return res.status(401).json({
                     success: false,
@@ -46,11 +100,9 @@ const consoleLog = require("../Utils/consoleLog.js")
             }
 
 
-            
-
-
-            const { emp_password, ...userInfo } = user[0];
-            const token = await createJWTToken(userInfo.emp_id, userInfo.emp_email);
+            // --4. Create JWT Token and send response without password
+            const { user_password, ...userInfo } = user;
+            const token = await createJWTToken(userInfo.user_id, userInfo.user_email);
             
 
             return res.status(200).json({
@@ -62,10 +114,11 @@ const consoleLog = require("../Utils/consoleLog.js")
 
             
         } catch (err) {
-            consoleLog(`Error in Logining ${err}`, "error");
+            consoleLog(`Error in Logining`, "error");
+            console.log(err)
             res.status(500).json({
                 success: false,
-                message: "Error in Logining"
+                message: err.message || "Error in Logining"
             });
         }
     });
@@ -77,20 +130,25 @@ const consoleLog = require("../Utils/consoleLog.js")
                 let user = req.body;
 
                 //Bad Request if
-                if(!user.emp_email || !user.emp_password) return res.status(400 ).json({success:false,message:"Bad Request"});
+                if(!user.user_email || !user.user_password) return res.status(400 ).json({success:false,message:"Bad Request"});
 
-                const check_unregistered_table = await isExist(`SELECT * FROM unregistered_employees WHERE emp_email = ?`,[user.emp_email]);
-                const check_employees_table = await isExist(`SELECT * FROM employees WHERE emp_email = ?`,[user.emp_email]);
+                const check_unregistered_table = await isExist(`SELECT EXISTS(SELECT * FROM unregistered_employees WHERE user_email = ?) AS data_exists`, [user.user_email]);
+                const check_users_table = await isExist(`SELECT EXISTS(SELECT * FROM users WHERE user_email = ? ) AS data_exists`, [user.user_email]);
+                const check_employees_table = await isExist(`SELECT EXISTS(SELECT * FROM employees WHERE emp_id = ?) AS data_exists`, [check_users_table.user_id]);
 
-                if (check_unregistered_table.exists) {
+                if (check_unregistered_table) {
                     return res.json({ success: false, message: "User Already staged & Waiting For Approval" });
-                } else if (check_employees_table.exists) {
+                } else if (check_employees_table && check_users_table?.user_type === 'employee') {
                     return res.json({ success: false, message: "User Already Registered & Approved" });
                 } 
+                else if (check_users_table?.user_type === 'patient'){
+                    return res.json({ success: false, message: "User already registered As patient, use another email" });
+                }
                 /* If user is not staged or registered before we start registering it */
 
             // assign hashed to user before preparing for inserting into db 
-            user["emp_password"] = await User.hashPassword(user["emp_password"]);
+
+            user["user_password"] = await User.hashPassword(user["user_password"]);
 
             // make entries array of hashed user
             let request_entries = Object.entries(user);
@@ -150,8 +208,8 @@ const consoleLog = require("../Utils/consoleLog.js")
 
 
             // first check user exists 
-            const query = `SELECT * FROM employees WHERE emp_id = ?`
-            const { exists } = await isExist(query,[emp_id]);
+            const query = `SELECT EXISTS(SELECT * FROM employees WHERE emp_id = ?) AS data_exists`;
+            const exists  = await isExist(query,[emp_id]);
             // make sure to remove fields that cannot be changed by user 
             userData = fixedFields(userData);
             if(exists){
@@ -182,18 +240,18 @@ const consoleLog = require("../Utils/consoleLog.js")
     // forget password
     router.post("/forget-password",async function(req , res){
         try{   
-            const { emp_email } = req.body;
+            const { user_email } = req.body;
 
             //Bad Request if
-            if(!emp_email) return res.status(400 ).json({success:false,message:"Bad Request"});
+            if(!user_email) return res.status(400 ).json({success:false,message:"Bad Request"});
 
 
 
             // search for user inside employees table
-            const query = `SELECT * FROM employees WHERE emp_email =?`
-            const userinTable = await isExist(query,[emp_email]);
+            const query = `SELECT EXISTS(SELECT * FROM employees WHERE user_email = ?) AS data_exists`;
+            const userinTable = await isExist(query,[user_email]);
             // USER NOT FOUND At EMPLOYEES TABLE
-            if(!userinTable.exists) 
+            if(!userinTable) 
                 res.status(404).json({
                     success:false,
                      message : "User Not Found"
@@ -221,7 +279,7 @@ const consoleLog = require("../Utils/consoleLog.js")
                 const reset_message = `Your request to reset your password was recieved,
                  Now you have to visit this link to reset your password to a new one : ${process.env.RESETPASSPATH}/${User._id}/${reset_token}`
                 //(SendFrom , SendTo , subject , text)
-                const isSent = await mailer("baraamohamed2311@gmail.com" ,emp_email, "Password Reset" , reset_message);
+                const isSent = await mailer("baraamohamed2311@gmail.com" ,user_email, "Password Reset" , reset_message);
                 
                     if(isSent){
                         res.status(200).json({success:true,message:"Reset Password Link Was Sent"});
@@ -242,13 +300,13 @@ const consoleLog = require("../Utils/consoleLog.js")
     // reset password
     router.put("/reset-password/:userId/:resetToken",async function(req ,res){
         try{
-            const {emp_password} = req.body;
+            const {user_password} = req.body;
             // userId is Id of user document at mongodb and not the emp_id field
             const  {userId , resetToken} = req.params;
 
 
             //Bad Request if
-            if(!emp_password || !userId || !resetToken) return res.status(400 ).json({success:false,message:"Bad Request"});
+            if(!user_password || !userId || !resetToken) return res.status(400 ).json({success:false,message:"Bad Request"});
 
             // get token & creation date & emp_id from mongodb
             const resetTokenForUser = await ResetPasswordTokensModel.findOne({ _id:userId });
@@ -275,9 +333,9 @@ const consoleLog = require("../Utils/consoleLog.js")
                    created_Token_at.day === current_Time.day){
                     
                     // then token is still valid and we save new password into db
-                    const hashedPassword = await User.hashPassword(emp_password);
+                    const hashedPassword = await User.hashPassword(user_password);
 
-                    const isReseted = await executeMySqlQuery(`UPDATE employees SET emp_password = ? WHERE emp_id = ?`,[hashedPassword , resetTokenForUser.emp_id])
+                    const isReseted = await executeMySqlQuery(`UPDATE employees SET user_password = ? WHERE emp_id = ?`,[hashedPassword , resetTokenForUser.emp_id])
                     
                     if(isReseted){
                         res.status(200).json({

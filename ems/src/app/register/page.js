@@ -3,7 +3,7 @@
 import Form from "@/components/Form/Form";
 import styles from "./register.module.css";
 import { useRef, useState } from "react";
-import {inputs_info , select_options} from "./data";
+import {inputs_info , select_def} from "./data";
 import userNotification from "@/utils/userNotification";
 import { useRouter } from "next/navigation";
 
@@ -12,7 +12,6 @@ export default function RegisterPage() {
   let router = useRouter();
 
   // ========================>MUST HAVE SAME ORDER IN references ARRAY AS inputs_info <=================
-  console.log("select_options",select_options);
 
   let selectBoxsRef = useRef({});
   let inputsBoxsRef = useRef({});
@@ -20,19 +19,29 @@ export default function RegisterPage() {
   function register_handler(e){
     // preventing refresh
     e.preventDefault();
-      setFormBtnState("Loading...");
+
+    // Validate all references before proceeding
+    const validation = validateAllReferences();
+    
+    if (!validation.isValid) {
+        userNotification('error', validation.message);
+        return;
+    }
+
+    setFormBtnState("Loading...");
     // gathering values of body from refrences
-    const requestBody ={};
+    const requestBody ={}
+  
     /******************************/
     inputs_info.forEach((input) => {
       requestBody[input.name]= inputsBoxsRef.current[input.name].value;
     });
     
-    // Adding Title & Speciality selection
-    console.log("selectBoxsRef.current",selectBoxsRef.current);
-      requestBody[select_options.select_title_options.name]= selectBoxsRef.current[select_options.select_title_options.name].value;
-      requestBody[select_options.select_speciality_options.name]= selectBoxsRef.current[select_options.select_speciality_options.name].value;
-    console.log("requestBody",requestBody);
+    // Adding Title & specialty selection
+    
+      requestBody[select_def.select_title_options.name]= selectBoxsRef.current[select_def.select_title_options.name].value;
+      requestBody[select_def.select_specialty_options.name]= selectBoxsRef.current[select_def.select_specialty_options.name].value;
+
 
 
     fetch(`${process.env.APIKEY}/user/register`, 
@@ -61,11 +70,57 @@ export default function RegisterPage() {
           }
         })
         .catch(err=>{
-          console.log("Error Login",err);
+
           setFormBtnState("Try Again");
           userNotification("error" , data.message)
         })
   }
+
+  // Validation function
+function validateAllReferences() {
+    const missingFields = [];
+    
+    // Check input references
+    inputs_info.forEach((input) => {
+        const ref = inputsBoxsRef.current[input.name];
+        
+        if (!ref) {
+            missingFields.push(`Input reference for "${input.name}" is undefined`);
+        } else if (!ref.value || ref.value.trim() === '') {
+            missingFields.push(`${input.label || input.name} is required`);
+        }
+    });
+    
+    // Check select references
+    const selectRefs = [
+        { 
+            name: select_def.select_title_options.name, 
+            label: select_def.select_title_options.label || 'Title' 
+        },
+        { 
+            name: select_def.select_specialty_options.name, 
+            label: select_def.select_specialty_options.label || 'Specialty' 
+        }
+    ];
+    
+    selectRefs.forEach((select) => {
+        const ref = selectBoxsRef.current[select.name];
+        
+        if (!ref) {
+            missingFields.push(`Select reference for "${select.name}" is undefined`);
+        } else if (!ref.value || ref.value.trim() === '') {
+            missingFields.push(`${select.label} is required`);
+        }
+    });
+    
+    return {
+        isValid: missingFields.length === 0,
+        message: missingFields.length > 0 
+            ? `Missing or empty fields:\n${missingFields.join('\n')}` 
+            : 'All fields are valid',
+        missingFields
+    };
+}
   
   return (
     <>
@@ -74,9 +129,8 @@ export default function RegisterPage() {
           <h1>EMS - Register</h1>
           <Form 
           form_handler={register_handler} 
-          select_options ={select_options} 
+          fieldDefinitions={{inputs_info,select_def}}
           formBtnState = {formBtnState} 
-          inputs_info = { inputs_info} 
           references={{inputsBoxsRef , selectBoxsRef}} 
           formKind={"register_form"}/>
         </div>

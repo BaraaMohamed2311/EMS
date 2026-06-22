@@ -6,7 +6,7 @@ export default function pickRoleIcon(role_name){
         case "Admin":
             return "/Admin.svg"
 
-        case "Employee":
-            return "/Employee.svg"
+        case "NormalUser":
+            return "/NormalUser.svg"
     }
 }

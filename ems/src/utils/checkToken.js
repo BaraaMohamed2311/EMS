@@ -1,7 +1,7 @@
 import userNotification from "./userNotification";
 import statusNotification from "@/utils/statusNotification"
 export default function checkToken(token , setIsValid , setIsLoading ){
-    
+        
     fetch(`${process.env.APIKEY}/user/private-route`,{
         method:"POST",
         mode:"cors",

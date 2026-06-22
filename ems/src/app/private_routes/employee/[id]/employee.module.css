@@ -1,13 +1,19 @@
 
-.employee-main{
-    width: 100vw;
-    height: fit-content ;
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 2rem;
-    background-color: var(--sec-dark);
+.page-main {
+  width: 100vw;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: var(--spacing-xl);
+  background-color: var(--sec-dark);
+}
+  .editing_box_wrapper{
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50% , -50%);
+    z-index: 1000;
   }
   
   .employee-container {
@@ -239,6 +245,138 @@
     background-color: var(--red);
     color: var(--white);
   }
+
+
+  .role-details {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0;
+  background: #fafafa;
+  border-radius: 0.8rem;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+}
+
+.role-details li {
+  padding: 0.8rem 1rem;
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.role-details li:last-child {
+  border-bottom: none;
+}
+
+.availability_box {
+  margin: 10px 0;
+  padding: 15px;
+  background: #f8f9fa;
+
+}
+
+.availability_header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.1em;
+  margin-bottom: 12px;
+  color: #2c3e50;
+}
+
+.availability_wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  height: 10rem;
+  overflow-y: auto;
+}
+
+/* For Option 1 */
+.schedule_item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  background: white;
+  border-radius: 6px;
+  border: 1px solid #e9ecef;
+}
+
+.day {
+  font-weight: 600;
+  color: #495057;
+  min-width: 40px;
+}
+
+.time {
+  color: #6c757d;
+  font-family: 'Courier New', monospace;
+  font-size: 0.9em;
+}
+
+
+
+.schedule_item:hover {
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  transform: translateY(-1px);
+}
+
+.day_info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.day_name {
+  font-weight: 700;
+  color: #007bff;
+  min-width: 35px;
+}
+
+.full_day {
+  font-size: 0.8em;
+  color: #6c757d;
+  display: none;
+}
+
+.time_range {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.time {
+  font-family: 'Courier New', monospace;
+  font-size: 0.9em;
+  color: #495057;
+}
+
+.separator {
+  color: #adb5bd;
+  font-weight: 300;
+}
+
+.no_schedule {
+  text-align: center;
+  color: #6c757d;
+  font-style: italic;
+  padding: 20px;
+}
+
+.icon {
+  font-size: 1.2em;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .schedule_item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+  
+  .full_day {
+    display: inline;
+  }
+}
 
 
   

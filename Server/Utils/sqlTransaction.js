@@ -1,56 +1,49 @@
-const connectionPool = require("./connect_ems_db");
+const getConnectionPool = require("./connect_ems_db").getConnectionPool;
 const consoleLog = require("../Utils/consoleLog");
 
+/**
+ * Execute multiple queries in a transaction with parameterized values
+ * @param {Array<string>} queries - Array of SQL query strings with ? placeholders
+ * @param {Array<Array>} params - Array of parameter arrays, one for each query
+ * @returns {Promise<boolean>}
+ */
+async function sqlTransaction(queries, params = []) {
+    const connectionPool = getConnectionPool();
+    return new Promise((resolve, reject) => {
+        connectionPool.getConnection(async (err, connection) => {
+            if (err) {
+                consoleLog(`Error getting connection: ${err}`, "error");
+                return reject(err);
+            }
 
-async function sqlTransaction(queries) {
-    return new Promise((resolve , reject)=>{
-        connectionPool.getConnection(async (err , connection)=>{
             try {
                 // Start the transaction
-                 connection.beginTransaction();
-                // Execute each query in order
-                for (let query of queries) {
-                    await connection.promise().execute(query);
+                await connection.promise().beginTransaction();
+                
+                // Execute each query in order with its corresponding params
+                for (let i = 0; i < queries.length; i++) {
+                    const query = queries[i];
+                    const queryParams = params[i] || []; // Use empty array if no params
+                    
+                    await connection.promise().execute(query, queryParams);
                 }
         
                 // Commit the transaction
-                connection.commit();
+                await connection.promise().commit();
                 console.log("Transaction successfully committed.");
                 connection.release(); // Release the connection
-                resolve(true)
+                resolve(true);
+                
             } catch (error) {
-                    connection.rollback(); // Rollback if an error occurs
-                    consoleLog(`Transaction error, rolling back: ${error}`, "error");
-                    reject(error)
+                // Rollback if an error occurs
+                await connection.promise().rollback();
+                consoleLog(`Transaction error, rolling back: `, "error");
+                console.log(error);
+                connection.release(); // Release the connection even on error
+                reject(error);
             }
         });
-    })
-    
+    });
 }
 
 module.exports = sqlTransaction;
-
-
-/*connectionPool.getConnection(async (err , connection)=>{
-        try {
-            // Start the transaction
-             connection.beginTransaction();
-            // Execute each query in order
-            for (let query of queries) {
-                await connection.promise().execute(query);
-            }
-    
-            // Commit the transaction
-            connection.commit();
-            console.log("Transaction successfully committed.");
-            state = true;
-            console.log("State inside" , state)
-        } catch (error) {
-            if (connection) {
-                connection.rollback(); // Rollback if an error occurs
-                consoleLog(`Transaction error, rolling back: ${error}`, "error");
-            }
-        } finally {
-            connection.release(); // Release the connection
-        }
-    });*/

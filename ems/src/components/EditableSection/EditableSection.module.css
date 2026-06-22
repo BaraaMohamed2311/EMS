@@ -1,0 +1,38 @@
+.editing_box_wrapper {
+  position: fixed;
+  top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: auto; /* Only as wide as content */
+    max-width: 40rem; /* optional max-width */
+  padding: 2rem;
+  border-radius: 8px;
+  margin: 1rem 0;
+}
+
+.closeButton {
+  top: 1rem;
+  right: 1rem;
+  background: #f44336;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s ease;
+  z-index: 10;
+}
+
+.closeButton:hover {
+  background: #d32f2f;
+}
+
+.closeButton:focus {
+  outline: 2px solid #ff5722;
+  outline-offset: 2px;
+}

@@ -1,7 +1,8 @@
-const connectionPool = require("./connect_ems_db");
+const getConnectionPool = require("./connect_ems_db").getConnectionPool;
 const consoleLog = require("../Utils/consoleLog");
 
 async function isExist(query , paramsArray) {
+    const connectionPool = getConnectionPool();
     try {
         const result = await new Promise((resolve, reject) => {
             
@@ -12,11 +13,11 @@ async function isExist(query , paramsArray) {
                 }
                 
                 // If there are results, resolve with exists: true
-                if (result.length > 0) {
-                    resolve({ exists: true  , data : result[0]});
+                if (result.length > 0 && result[0].data_exists) {
+                    resolve( true  );
                 } else {
                     // Otherwise, resolve with exists: false
-                    resolve({ exists: false });
+                    resolve(false );
                 }
             });
         });

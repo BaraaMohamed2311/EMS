@@ -5,7 +5,7 @@ import Footer from "@/components/Footer/Footer";
 import { useEffect } from "react";
 
 export default function Home() {
-  // useClosure to create debouncer to limit number of execution
+  // useClosure to create debouncer to limit number of executions
     function debounce(callback, delay) {
         let timer;
         return function (...args) {
@@ -15,7 +15,7 @@ export default function Home() {
             }, delay);
         };
     }
-
+ 
     useEffect(() => {
         const roles_cards = document.querySelectorAll(".role-cards");
         const debouncedHandleMouseMoveGlow = debounce(handleMouseMoveCircle, 200);
@@ -140,13 +140,13 @@ export default function Home() {
                         <Image
                             priority={false}
                             className={styles["role-image"]}
-                            src={"/Employee.svg"}
+                            src={"/NormalUser.svg"}
                             width={100}
                             height={100}
                             alt="EMS Role Image"
                         />
                         <div className={styles["role-text"]}>
-                            <h2 className={styles["role-text-h2"]}>Employee Role</h2>
+                            <h2 className={styles["role-text-h2"]}>Normal User Role</h2>
                         </div>
                         <ul className={styles["role-perms"]}>
                             <li className={`role-box_opacity`}>

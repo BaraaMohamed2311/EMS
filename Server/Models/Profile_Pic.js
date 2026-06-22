@@ -15,13 +15,12 @@ const PIC_Schema = new mongoose.Schema({
 const Profile_PIC_Schema = new mongoose.Schema({
     
     
-      
-        emp_email: {type:String, required:true},
-        emp_pic: PIC_Schema 
+        user_id: {type:String, required:true},
+        user_pic: PIC_Schema 
       
     
     
-},{timestamps:true , collection:"Employees"})
+},{timestamps:true , collection:"EMS_Images"})
 
 module.exports = mongoose.model("Image",Profile_PIC_Schema);
 

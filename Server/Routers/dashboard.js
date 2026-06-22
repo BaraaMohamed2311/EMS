@@ -29,7 +29,7 @@ const router = require("express").Router();
                         totalBonusPaid :EmpsData[0].bonus
                     }, message:"Successful Get Data Dashboard" });
         else{
-            return res.status(404).json({success: false , message:"Something Went Wrong" });
+            return res.status(404).json({success: false , message:"Couldn't fetch all details" });
         }
     }
     catch(err){

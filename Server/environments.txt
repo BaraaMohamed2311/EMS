@@ -1,0 +1,34 @@
+
+# Port for your backend application
+PORT=
+
+# Secret key for your application
+SECRET_KEY=
+
+# MongoDB connection string
+EMS_MongoDB=
+
+# Password reset link
+RESETPASSPATH=
+
+# Mailer password
+MAILERPASS=
+
+# Name of the MySQL database
+DB_NAME=
+
+
+# Database password for MySQL
+DB_PASSWORD=
+
+# MySQL user
+DB_USER=
+
+# MySQL port
+DB_PORT=
+
+DB_HOST=
+
+
+
+

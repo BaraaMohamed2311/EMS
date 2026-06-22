@@ -2,20 +2,28 @@
 const dev = process.env.NODE_ENV ;
 
 if (dev === 'local') {
-  console.log("Config Local Docker host")
   require('dotenv').config({ path: './.env.local' }); 
+  console.log("Running in local environment");
 } else if(dev === 'production') {
-  require('dotenv').config({ path: './.env.prod' });   // Load production environment variables
+  const result = require('dotenv').config({
+    path: '/run/secrets/prod_ems_server_config'
+  });   // Load production environment variables
+  console.log("Running in production environment" );
+}
+else if(dev === 'production-kube') {
+  require('dotenv').config({ path: './.env.prod.kube' });   // Load production environment variables
+  console.log("Running in production-kube environment");
 }
 else{
-  console.log("Config development | No containers")
   require('dotenv').config({ path: './.env.dev' });  // Load development environment variables
+  console.log("Running in development environment");
 }
 /**************************/
 const express = require("express");
 const app = express();
 const consoleLog = require("./Utils/consoleLog.js");
-const appUses = require("./Startup/appUses.js")
+const appUses = require("./Startup/appUses.js");
+const mongoose = require("mongoose")
 // environment vars
 const PORT = process.env.PORT;
 
@@ -28,8 +36,9 @@ const PORT = process.env.PORT;
   })
 
 // Server Launch
-app.listen(PORT,(req, res)=>{
-    res
+app.listen(PORT,async (req, res)=>{
+    await mongoose.connect(process.env.EMS_MongoDB);
+    console.log("MongoDB ready");
     consoleLog(`Server is Running on port : ${PORT}` , "success"); 
 })
 
