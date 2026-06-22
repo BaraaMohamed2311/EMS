@@ -1,6 +1,6 @@
 {
   "name": "ems",
-  "version": "0.1.0",
+  "version": "base",
   "private": true,
   "scripts": {
     "dev": "next dev",
